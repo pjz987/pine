@@ -280,6 +280,10 @@ public class FlickingMechanics : MonoBehaviour
           // Allow the pinecone to be flicked (run via FixedUpdate)
           flickDirectionPhysics = flickDirection;
           allowPineconeFlick = true;
+
+          // Sound by me (Pete)
+          FindObjectOfType<AudioManager>().Play("LaunchSound");
+          Debug.Log("hey!");
      }
 
 
