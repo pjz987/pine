@@ -5,9 +5,9 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
      [SerializeField] Vector3 mountainCenter = new Vector3(0, 0, 0);
-     [SerializeField, Range(1,10)] float distanceFromPlayer = 5f;
-     [SerializeField, Range(0, 4)] float cameraHeight = 3f;
-     [SerializeField, Range(0, 45)] float tiltAngle = 20f;
+     [SerializeField, Range(1,20)] float distanceFromPlayer = 5f;
+     [SerializeField, Range(0, 20)] float cameraHeight = 3f;
+     [SerializeField, Range(0, 60)] float tiltAngle = 20f;
 
      GameObject characterController = null;
 
