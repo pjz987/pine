@@ -7,7 +7,7 @@ using UnityEngine;
 public class CustomCenterOfMass : MonoBehaviour
 {
      [SerializeField, Range(-2f,2f)] float centerOfMassHeight = 0f;
-     [SerializeField, Range(0f, 0.5f)] float drawSize = 0.3f;
+     [SerializeField, Range(0f, 0.5f)] float drawSize = 0.2f;
 
      Rigidbody _rb = null;
      Vector3 drawNewCenterOfMass = new Vector3(0, 0, 0);
@@ -34,7 +34,7 @@ public class CustomCenterOfMass : MonoBehaviour
      private void SetCenterOfMass()
      {
           // Create the new center of mass using a position ALREADY RELATIVE to this rigidbody.
-          Vector3 newCenter = new Vector3(0, centerOfMassHeight, 0);
+          Vector3 newCenter = _rb.transform.rotation * new Vector3(0, centerOfMassHeight, 0);
 
           // Allow it to be drawn via vector for Gizmos
           drawNewCenterOfMass = newCenter;
