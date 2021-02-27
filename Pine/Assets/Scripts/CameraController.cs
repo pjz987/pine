@@ -1,47 +1,52 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CameraController : MonoBehaviour
 {
-     [SerializeField] Vector3 mountainCenter = new Vector3(0, 0, 0);
-     [SerializeField, Range(1,10)] float distanceFromPlayer = 5f;
-     [SerializeField, Range(0, 4)] float cameraHeight = 3f;
-     [SerializeField, Range(0, 45)] float tiltAngle = 20f;
+    [SerializeField] Vector3 mountainCenter = new Vector3(0, 0, 0);
+    [SerializeField, Range(1,10)] float distanceFromPlayer = 5f;
+    [SerializeField, Range(0, 4)] float cameraHeight = 3f;
+    [SerializeField, Range(0, 45)] float tiltAngle = 20f;
+    [SerializeField]
+    private float movementDelay;
+    [SerializeField]
+    Ease movementType;
+    GameObject characterController = null;
+    private bool isInGame;
 
-     GameObject characterController = null;
+    virtual public void OnGamePlay()
+    {
+        if (characterController == null)
+            characterController = GameObject.FindWithTag("GameController");
 
+        isInGame = true;
 
-     private void Awake()
-     {
-          if (characterController == null)
-               characterController = GameObject.FindWithTag("GameController");
-
-          SetPositionOffset();
-     }
-
-
+        SetPositionOffset(movementType, movementDelay);
+    }
 
      private void Update()
      {
-          SetRotation();
+        if (isInGame)
+        {
+            SetRotation();
+        }
      }
-
-
 
      /// <summary>
      /// Offsets the position of the camera from the camera's parent position.
      /// Should only be called in Start or Awake since it overrides rotation from parent.
      /// </summary>
-     void SetPositionOffset()
+     void SetPositionOffset(Ease movementType, float movementDelay)
      {
-          // Move the camera away from the its parent along the Y and Z axis
-          Vector3 offset = new Vector3(0, cameraHeight, -distanceFromPlayer);
-          transform.position = transform.parent.position + offset;
+        // Move the camera away from the its parent along the Y and Z axis
+        Vector3 offset = new Vector3(0, cameraHeight, -distanceFromPlayer);
+        transform.DOLocalMove(offset, movementDelay).SetEase(movementType);
 
-          // Rotate the camera along its X axis.
-          Quaternion targetTilt = Quaternion.Euler(tiltAngle, 0, 0);
-          transform.rotation = targetTilt;
+        // Rotate the camera along its X axis.
+        Quaternion targetTilt = Quaternion.Euler(tiltAngle, 0, 0);
+        transform.DOLocalRotate(targetTilt.eulerAngles, movementDelay).SetEase(movementType);
      }
 
 
