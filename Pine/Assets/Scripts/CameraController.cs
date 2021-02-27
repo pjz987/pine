@@ -17,6 +17,10 @@ public class CameraController : MonoBehaviour
           // Find the character controller object.
           if (characterController == null)
                characterController = GameObject.FindWithTag("GameController");
+
+          // If the character controller reference is still null, send debug message.
+          if (characterController == null)
+               Debug.Log("No character controller in scene. Must add to scene for camera to work properly.");
      }
 
 
@@ -61,6 +65,10 @@ public class CameraController : MonoBehaviour
      /// </summary>
      void SetRotation()
      {
+          // If the character controller reference doesn't exist, don't do anything.
+          if (characterController == null)
+               return;
+
           // Find the direction from the character controller to the mountain.
           Vector3 targetDirection = (characterController.transform.position - mountainCenter).normalized;
 
