@@ -43,8 +43,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5b9c1373f5e0d14a8a8742bcbf4d993, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseDragDirection: {x: 0, y: 0, z: 0}
   uiClickArea: 1.2
   uiMouseRadius: 0.1
   objectToFlick: {fileID: 0}
+  treeObject: {fileID: 3235536750669014927, guid: 8a3a313b9abba464dab8ad40d26201a2,
+    type: 3}
   flickStrengthScalar: 15
   flickStrengthUpwards: 0.5
+  timeElapsedSinceFlick: 2
+  groundDistanceThreshold: 0.3
+  pineconeVelocityThreshold: 0.3
+  tempTreeTop: 3.8
+  playerState: 0
