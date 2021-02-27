@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
 
      private void Update()
      {
-          SetCameraOffsetChanges();
+          SetPositionOffset();
           SetRotation(); 
      }
 
@@ -36,7 +36,7 @@ public class CameraController : MonoBehaviour
      /// <summary>
      /// Offsets the position of the camera from its local position and rotation.
      /// </summary>
-     void SetCameraOffsetChanges()
+     void SetPositionOffset()
      {
           // Move the camera away from the its parent along the Y and Z axis
           Vector3 offset = new Vector3(0, cameraHeight, -distanceFromPlayer);
