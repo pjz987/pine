@@ -16,8 +16,15 @@ public class CharacterStateMachine : FlickingMechanics
           Tree_Flicking
      }
      public PlayerState playerState;
-
-
+     AudioManager audioManager;
+     // RNG for Random Sounds
+     Random random = null; // new System.Random();
+     string[] treeGroans = new string [] {"TreeGroan1", "TreeGroan2", "TreeGroan3", "TreeGroan4"};
+     void Start ()
+     {
+          random = new Random();
+          audioManager = FindObjectOfType<AudioManager>();
+     }
 
      // The State Machine for the player.
      private void Update()
@@ -48,6 +55,7 @@ public class CharacterStateMachine : FlickingMechanics
                {
                     PineconeFlick(flickDirection);
                     playerState = PlayerState.Pinecone_Movement;
+                    audioManager.Play("GroundFlicking");
                }
           }
 
@@ -87,6 +95,7 @@ public class CharacterStateMachine : FlickingMechanics
                if (mouseButtonDown == true)
                {
                     playerState = PlayerState.Tree_Flicking;
+                    audioManager.Play(treeGroans[Random.Range(0, treeGroans.Length)]);
                }
           }
 
