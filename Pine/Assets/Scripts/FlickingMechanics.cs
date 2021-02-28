@@ -7,6 +7,7 @@ public class FlickingMechanics : MonoBehaviour
 
      // Camera
      GameObject playerCamera = null;
+     private CameraController workingCameraController = null;
 
      // Mouse
      Vector3 mouseDragDirection = new Vector3(0, 0, 0);
@@ -51,7 +52,7 @@ public class FlickingMechanics : MonoBehaviour
           if (playerCamera == null)
           {
                playerCamera = GameObject.FindWithTag("MainCamera");
-
+               workingCameraController = playerCamera.GetComponent<CameraController>();
                // If camera still cannot be found, then log the problem.
                if (playerCamera == null)
                     Debug.Log("No camera found. Please add the 'MainCamera' tag to the camera object.");
@@ -62,19 +63,22 @@ public class FlickingMechanics : MonoBehaviour
 
      private void FixedUpdate()
      {
-          // If there is no object to flick, then do nothing.
-          if (objectToFlick == null)
-               return;
+        // If there is no object to flick, then do nothing.
+        if (workingCameraController.IsInGame == true)
+        {
+            if (objectToFlick == null)
+                return;
+            
+            FollowTransform(objectToFlick.transform);
+            playerCamera.GetComponent<CameraController>().FollowTransform(objectToFlick.transform);
 
-          FollowTransform(objectToFlick.transform);
-          playerCamera.GetComponent<CameraController>().FollowTransform(objectToFlick.transform);
-
-          // PineconeFlick
-          if (allowPineconeFlick == true)
-          {
-               // Using the inverse of the flick direction to simulate pulling backwards.
-               PineconeFlickPhysics(-flickDirectionPhysics);
-          }
+            // PineconeFlick
+            if (allowPineconeFlick == true)
+            {
+                // Using the inverse of the flick direction to simulate pulling backwards.
+                PineconeFlickPhysics(-flickDirectionPhysics);
+            }
+        }  
      }
 
 
