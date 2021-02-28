@@ -1,25 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class CameraController : MonoBehaviour
 {
-     [SerializeField] Vector3 mountainCenter = new Vector3(0, 0, 0);
-     [SerializeField, Range(1,20)] float distanceFromPlayer = 5f;
-     [SerializeField, Range(0, 20)] float cameraHeight = 3f;
-     [SerializeField, Range(0, 60)] float tiltAngle = 20f;
+    [SerializeField] Vector3 mountainCenter = new Vector3(0, 0, 0);
+    [SerializeField, Range(1,20)] float distanceFromPlayer = 5f;
+    [SerializeField, Range(0, 20)] float cameraHeight = 3f;
+    [SerializeField, Range(0, 60)] float tiltAngle = 20f;
+    [SerializeField]
+    private float movementDelay;
+    [SerializeField]
+    Ease movementType;
+    public virtual bool IsInGame { get; set; }
+    [SerializeField]
+    private GameObject initialObjectToFocusOn;
+    GameObject characterController = null;
 
-     GameObject characterController = null;
 
-
-     private void Awake()
+     virtual public void OnGamePlay()
      {
           // Find the character controller object.
           if (characterController == null)
-               characterController = GameObject.FindWithTag("GameController");
+        {
+            characterController = GameObject.FindWithTag("GameController");
+            MoveCameraToPositionOffSet(movementType, movementDelay);
+        }
 
-          // If the character controller reference is still null, send debug message.
-          if (characterController == null)
+        // If the character controller reference is still null, send debug message.
+        if (characterController == null)
                Debug.Log("No character controller in scene. Must add to scene for camera to work properly.");
      }
 
@@ -27,11 +36,20 @@ public class CameraController : MonoBehaviour
 
      private void Update()
      {
-          SetPositionOffset();
-          SetRotation(); 
+        if (IsInGame)
+        {
+            SetPositionOffset();
+            SetRotation();
+        }
      }
 
-
+     void MoveCameraToPositionOffSet(Ease movementType, float movementDelay)
+     {
+        Vector3 offset = new Vector3(0, cameraHeight, -distanceFromPlayer);
+        Quaternion targetTilt = Quaternion.Euler(tiltAngle, 0, 0);
+        transform.DOLocalRotate(targetTilt.eulerAngles, movementDelay).SetEase(movementType);
+        transform.DOMove(initialObjectToFocusOn.transform.position + offset, movementDelay).SetEase(movementType).OnComplete(() => IsInGame = true);
+     }
 
      /// <summary>
      /// Offsets the position of the camera from its local position and rotation.
