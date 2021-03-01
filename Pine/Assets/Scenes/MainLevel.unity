@@ -138,6 +138,16 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: DisplayMainMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 1852470287262542051, guid: 3f5269bfa030443a1811a24a7b92a110,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 326632911}
+    - target: {fileID: 1852470287262542051, guid: 3f5269bfa030443a1811a24a7b92a110,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: HideTutorial
+      objectReference: {fileID: 0}
     - target: {fileID: 8609858612921013262, guid: 3f5269bfa030443a1811a24a7b92a110,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -270,6 +280,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f5269bfa030443a1811a24a7b92a110, type: 3}
+--- !u!224 &57912694 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6638923325810301350, guid: 3f5269bfa030443a1811a24a7b92a110,
+    type: 3}
+  m_PrefabInstance: {fileID: 57912693}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &57912695 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4192376591804573308, guid: 3f5269bfa030443a1811a24a7b92a110,
+    type: 3}
+  m_PrefabInstance: {fileID: 57912693}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &326632911 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
@@ -1028,6 +1050,16 @@ PrefabInstance:
       propertyPath: mainMenu
       value: 
       objectReference: {fileID: 1417593126}
+    - target: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
+        type: 3}
+      propertyPath: transition
+      value: 
+      objectReference: {fileID: 57912694}
+    - target: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
+        type: 3}
+      propertyPath: tutorialImage
+      value: 
+      objectReference: {fileID: 57912695}
     - target: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
         type: 3}
       propertyPath: workingCameraController
