@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - TreeHolder
+  - raycast
   layers:
   - Default
   - TransparentFX
