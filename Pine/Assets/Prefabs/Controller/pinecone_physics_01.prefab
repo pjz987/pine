@@ -576,7 +576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   centerOfMassHeight: 0.2
-  drawSize: 0.2
+  drawSize: 0
 --- !u!1 &8315562336260928245
 GameObject:
   m_ObjectHideFlags: 0
