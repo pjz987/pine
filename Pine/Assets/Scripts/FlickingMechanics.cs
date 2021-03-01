@@ -10,31 +10,34 @@ public class FlickingMechanics : MonoBehaviour
      private CameraController workingCameraController = null;
 
      // Mouse
-     Vector3 mouseDragDirection = new Vector3(0, 0, 0);
-     Vector2 mouseClickPosition = new Vector2(0, 0);
+     Vector2 mouseClickPosition = new Vector2(1, 1);
      Vector2 mouseCurrentPosition = new Vector2(0, 0);
 
+     Vector3 flickDirection = new Vector3(0, 0, 0);
+     Vector3 flickDirectionPhysics = new Vector3(0, 0, 0);
+
      protected bool mouseButtonDown = false;
+     bool allowPineconeFlick = false;
      bool showClickAbility = false;
-     [Header("Mouse Grab Spacing")]
-     public float uiClickArea = 1f;
-     public float uiMouseRadius = 1f;
+     float uiMouseRadius = 0.5f;
 
      // Flicking
      [Header("Flicking Objects")]
      public GameObject objectToFlick = null;
      public GameObject treeObject = null;
 
-     [Header("Flick Attributes")]
-     public int flicksUntilTreeGrowth = 1;
-     public int currentFlickCounter = 0;
-     public float flickStrengthScalar = 15f;  
-     public float flickStrengthUpwards = 1f;
-     public float timeElapsedSinceFlick = 0.2f;
-     float flickTimerCountdown = 0f;
+     [Header("Flick Attributes")]    
+     [SerializeField] float objectFlickForward = 6f;  
+     [SerializeField] float objectFlickUpward = 0.8f;
+     [SerializeField] float treeFlickForward = 3.5f;
+     [SerializeField] float treeFlickUpward = 2.5f;
+     [SerializeField] float treeBendAmount = 6f;
 
-     Vector3 flickDirectionPhysics = new Vector3(0, 0, 0);
-     bool allowPineconeFlick = false;
+     [SerializeField] int flicksUntilTreeGrowth = 2;
+     int currentFlickCounter = 0;
+
+     [SerializeField] float timeElapsedSinceFlick = 0.2f;
+     float flickTimerCountdown = 0f;
 
      // Raycasting and Tree Growing Thresolds
      float groundDistance = 0f;
@@ -57,6 +60,9 @@ public class FlickingMechanics : MonoBehaviour
                if (playerCamera == null)
                     Debug.Log("No camera found. Please add the 'MainCamera' tag to the camera object.");
           }
+
+          // Set the flick counter.
+          currentFlickCounter = flicksUntilTreeGrowth;
      }
 
 
@@ -146,7 +152,7 @@ public class FlickingMechanics : MonoBehaviour
           
 
           // Check to see if the mouse is within grabbing range of the object to flick
-          if (CheckMouseWithinFlickingArea(uiClickArea) == true && CheckForObjectToFlick() == true)
+          if (/*CheckMouseWithinFlickingArea() == true && */ CheckForObjectToFlick() == true)
           {
                // If the player clicks, then find the click position
                if (Input.GetButtonDown("MouseButton"))     
@@ -160,13 +166,15 @@ public class FlickingMechanics : MonoBehaviour
           if (Input.GetButtonUp("MouseButton"))
           {
                mouseButtonDown = false;
-               mouseClickPosition = Vector3.zero;
+               mouseClickPosition = Vector3.one;
           }
      }
 
 
+
      /// <summary>
-     /// Gets the position of the mouse to the playable screen size of the game, either windowed or fullscreen.
+     /// Gets the position of the mouse to the playable screen size of the game, either windowed or fullscreen. 
+     /// Does not set the center screen position regarding mouse input.
      /// </summary>
      /// <returns></returns>
      Vector2 GetMouseConstraints()
@@ -177,7 +185,7 @@ public class FlickingMechanics : MonoBehaviour
 
           // Set mouse origin position to the center of the playable area.
           mouseConstrainedPosition.x -= screenWidth;
-          mouseConstrainedPosition.y -= screenHeight;
+          mouseConstrainedPosition.y -= screenHeight; // * customScreenCenter;
 
           // Clamp the mouse position to the playable screen size.
           mouseConstrainedPosition.x = Mathf.Clamp(mouseConstrainedPosition.x, -screenWidth, screenWidth);
@@ -188,22 +196,23 @@ public class FlickingMechanics : MonoBehaviour
 
 
      /// <summary>
-     /// Gets the normalized vector3 of the mouse position relative to the center of the camera root position. 
+     /// Gets the angle between the mouse's current and clicked position and return a normalized vector from the camera's root position. 
      /// </summary>
      /// <returns></returns>
      Vector3 GetMouseDragAngle()
      {
-          // Get the camera root position.
-          Transform cameraRootTransform = playerCamera.transform.root.transform;
+          // Find the angle of the mouse current position relative to the mouse's clicked position.
+          float yDelta = mouseClickPosition.y - mouseCurrentPosition.y;
+          float xDelta = mouseClickPosition.x - mouseCurrentPosition.x;
+          float mouseAngle = -1f * Mathf.Atan2(yDelta, xDelta) * Mathf.Rad2Deg;
 
-          // Find the angle of the mouse position relative to the mouse's zero position (0, 0).
-          // Vector2.Angle wasn't working with (0, 0) as a point. Using Atan2 is fine.
-          float mouseAngle = Mathf.Atan2(mouseCurrentPosition.y, mouseCurrentPosition.x) * Mathf.Rad2Deg;
-          mouseAngle += 90f;  // Need to offset to align upcoming vector with mouse screen position
+          mouseAngle += 90f;       // Need to offset and invert X to align vector to camera's direction.
 
           // Creates a vector based on an angle around the camera root's y-axis, and at the camera root's position. 
-          // Inverted mouseAngle to align with mouse screen position.
-          Vector3 mouseDragDirection = Quaternion.AngleAxis(-mouseAngle, cameraRootTransform.up) * cameraRootTransform.position;
+          Transform cameraRootTransform = playerCamera.transform.root.transform;
+          Vector3 cameraPositionIgnoringHeight = new Vector3(cameraRootTransform.position.x, 0f, cameraRootTransform.position.z);
+
+          Vector3 mouseDragDirection = Quaternion.AngleAxis(mouseAngle, Vector3.up) * cameraPositionIgnoringHeight;
 
           // Returning normalized vector to keep consistency.
           return mouseDragDirection.normalized;
@@ -212,47 +221,24 @@ public class FlickingMechanics : MonoBehaviour
 
      
      /// <summary>
-     /// Gets the amount the mouse is pulled back relative to screen size and returns the scaled magnitude.
+     /// Gets the amount the mouse is pulled back relative to screen size AND screen center. Returns the scaled magnitude.
      /// </summary>
      /// <returns></returns>
-     float GetMouseDragDistance()
-     {
+     float GetMouseDragDistance(float forceAmount)
+     {    
           // Get percentage of mouse X to screen X. Repeat for Y.
-          float xPercent = mouseCurrentPosition.x / (Screen.width * 0.5f);
-          float yPercent = mouseCurrentPosition.y / (Screen.height * 0.5f);
+          float xCurrentPercent = mouseCurrentPosition.x / (Screen.width * 0.5f);
+          float yCurrentPercent = mouseCurrentPosition.y / (Screen.height * 0.5f); // * customScreenCenter);
 
-          // Set the percentage values in a new vector
-          Vector2 mouseDistance = new Vector2(xPercent, yPercent);
+          // Get percentage of click X to screen X. Repeat for Y.
+          float xClickPercent = mouseClickPosition.x / (Screen.width * 0.5f);
+          float yClickPercent = mouseClickPosition.y / (Screen.height * 0.5f); // * customScreenCenter);
+
+          // Set the distance between percentage values in a new vector
+          Vector2 mouseDistance = new Vector2(xCurrentPercent, yCurrentPercent) - new Vector2(xClickPercent, yClickPercent);                 
 
           // Return the magnitude of the new vector
-          return mouseDistance.magnitude * flickStrengthScalar;
-     }
-
-
-
-     /// <summary>
-     /// Determines whether or not the mouse is within the range of grabbing the tree/pinecone.
-     /// </summary>
-     /// <returns></returns>
-     bool CheckMouseWithinFlickingArea(float mouseGrabRange)
-     {
-          // If there is no object attached, only return false.
-          if (objectToFlick == null)
-          {
-               return false;
-          }
-          // Else if the mouse is within the flicking area, show flicking mouse grab range.
-          else if (Mathf.Abs(PreparePineconeFlick().magnitude) <= mouseGrabRange)
-          {
-               showClickAbility = true;
-               return true;
-          }
-          // If mouse is NOT within grabbing range, then return false.
-          else
-          {
-               showClickAbility = false;
-               return false;
-          }
+          return mouseDistance.magnitude * forceAmount;
      }
 
 
@@ -267,16 +253,18 @@ public class FlickingMechanics : MonoBehaviour
      /// <returns></returns>
      protected Vector3 PreparePineconeFlick()
      {
-          Vector3 flickDirection = new Vector3(0, 0, 0);
+          // If the mouse button is currently held down, update flick direction
+          if (mouseButtonDown == true)
+          {
+               // Set the direction of the flick based on the angle on mouse click and orientation of camera.
+               flickDirection = GetMouseDragAngle();
 
-          // Set the direction of the flick based on the angle on mouse click and orientation of camera.
-          flickDirection = GetMouseDragAngle();
+               // Set the strength of the flick in the vector's magnitude.
+               flickDirection = flickDirection * GetMouseDragDistance(objectFlickForward);
 
-          // Set the strength of the flick in the vector's magnitude.
-          flickDirection = flickDirection * GetMouseDragDistance();
-
-          // Adjust the upward strength of the flick based on a percent of the flick's strength.
-          flickDirection = AdjustUpwardFlickStrength(flickDirection);
+               // Adjust the upward strength of the flick based on a percent of the flick's strength.
+               flickDirection = AdjustUpwardFlickStrength(flickDirection, objectFlickUpward);
+          }
 
           return flickDirection;
      }
@@ -286,10 +274,10 @@ public class FlickingMechanics : MonoBehaviour
      /// <summary>
      /// Applies an upward force to the pinecone based on flick strength.
      /// </summary>
-     Vector3 AdjustUpwardFlickStrength(Vector3 inputDirection)
+     Vector3 AdjustUpwardFlickStrength(Vector3 inputDirection, float forceAmount)
      {
           // Get the upward strength based on the magnitude
-          float upwardForce = inputDirection.magnitude * -flickStrengthUpwards;
+          float upwardForce = inputDirection.magnitude * -forceAmount;
 
           // Apply the upward force to the input vector.
           return inputDirection + new Vector3(0, upwardForce, 0);
@@ -340,8 +328,8 @@ public class FlickingMechanics : MonoBehaviour
           Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
 
           // Apply a force impulse to the object's rigidbody.
-          //_rb.AddForce(flickDirection, ForceMode.Impulse);
-          _rb.AddForceAtPosition(flickDirection, _rb.transform.position + (_rb.transform.up*0.1f), ForceMode.Impulse);
+          _rb.AddForce(flickDirection, ForceMode.Impulse);
+          //_rb.AddForceAtPosition(flickDirection, _rb.transform.position + (_rb.transform.up*0.1f), ForceMode.Impulse);
 
           // Zero out the flick position and remove ability to flick.
           flickDirectionPhysics = Vector3.zero;
@@ -448,6 +436,7 @@ public class FlickingMechanics : MonoBehaviour
           // Create the tree
           GameObject newTree = Instantiate(treeToGrow, objectToFlick.transform.position, Quaternion.identity);
           newTree.transform.parent = GameObject.FindGameObjectWithTag("TreeHolder").transform;
+          newTree.name = "tree_" + newTree.transform.parent.childCount;
 
           // Set the new tree as the treeObject
           treeObject = newTree;
@@ -473,6 +462,9 @@ public class FlickingMechanics : MonoBehaviour
 
           // Set the objectToFlick's position to the holding position.
           objectToFlick.transform.position = holdPosition;
+          
+          // Rotate the objectToFlick so it's up direction is the same as the tree's.
+          objectToFlick.transform.up = treeObject.transform.up;
      }
 
 
@@ -484,23 +476,26 @@ public class FlickingMechanics : MonoBehaviour
      /// <returns></returns>
      protected Vector3 PrepareTreeFlickSimple()
      {
-          Vector3 flickDirection = new Vector3(0, 0, 0);
+          // If the mouse button is currently held down, update flick direction.
+          if (mouseButtonDown == true)
+          {
+               // Set the direction of the flick based on the angle on mouse click and orientation of camera.
+               flickDirection = GetMouseDragAngle();
 
-          // Set the direction of the flick based on the angle on mouse click and orientation of camera.
-          flickDirection = GetMouseDragAngle();
+               // Set the strength of the flick in the vector's magnitude.
+               flickDirection = flickDirection * GetMouseDragDistance(treeFlickForward);
 
-          // Set the strength of the flick in the vector's magnitude.
-          flickDirection = flickDirection * GetMouseDragDistance();
+               // Rotating to flick direction - rotate tree along y-axis
+               Vector3 treeBend = (flickDirection * Mathf.Abs(treeBendAmount)) - new Vector3(0, -90f, 0);
+               treeObject.transform.localRotation = Quaternion.Euler(treeBend);
 
-          // Rotating to flick direction - rotate tree along y-axis
-          treeObject.transform.localRotation = Quaternion.Euler(flickDirection - new Vector3(0,-90f,0));
+               // Flicking back - rotate tree along x-axis
+               //Quaternion flickRotation = Quaternion.Euler(flickDirection.magnitude,0,0);
+               //treeObject.transform.localRotation = flickRotation;
 
-          // Flicking back - rotate tree along x-axis
-          //Quaternion flickRotation = Quaternion.Euler(flickDirection.magnitude,0,0);
-          //treeObject.transform.localRotation = flickRotation;
-
-          // Adjust the upward strength of the flick based on a percent of the flick's strength.
-          flickDirection = AdjustUpwardFlickStrength(flickDirection);
+               // Adjust the upward strength of the flick based on a percent of the flick's strength.
+               flickDirection = AdjustUpwardFlickStrength(flickDirection, treeFlickUpward);
+          }
 
           return flickDirection;
      }
@@ -542,8 +537,8 @@ public class FlickingMechanics : MonoBehaviour
      {
           if (playerCamera != null)
           {
-               mouseDragDirection = GetMouseDragAngle();
-               float mouseStrength = GetMouseDragDistance();
+               Vector3 mouseDragDirection = GetMouseDragAngle();
+               float mouseStrength = GetMouseDragDistance(objectFlickForward);
 
                // Mouse Direction
                Vector3 from = playerCamera.transform.parent.position;
@@ -553,12 +548,13 @@ public class FlickingMechanics : MonoBehaviour
                Gizmos.DrawLine(from, to);
 
                // Mouse Action - Ability to Click
-               if (showClickAbility == true)
+               if (showClickAbility == true & mouseClickPosition != Vector2.one)
                {
                     Gizmos.color = Color.yellow;
-                    Gizmos.DrawSphere(objectToFlick.transform.position, uiClickArea*0.3f);
+                    Gizmos.DrawSphere(objectToFlick.transform.position, uiMouseRadius*0.3f);  
                }
 
+               
                // MouseAction - Click Being Held
                if (mouseButtonDown == true)
                {
@@ -566,8 +562,9 @@ public class FlickingMechanics : MonoBehaviour
                     Gizmos.DrawSphere(to, uiMouseRadius);
 
                     Gizmos.color = Color.blue;
-                    Gizmos.DrawLine(from, -PreparePineconeFlick() + from);
+                    Gizmos.DrawLine(from, -flickDirection + from);
                }
+               
           }
      }
 
