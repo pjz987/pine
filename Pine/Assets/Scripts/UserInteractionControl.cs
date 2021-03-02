@@ -65,6 +65,9 @@ public class UserInteractionControl : MonoBehaviour
     public void HideTutorial()
     {
         HideFromView(tutorialImage, tutorialEndPoint, movementType);
+
+        // my line - transition playerstate from ui to pinecone_standingby
+        workingCameraController.GetCharacterStateMachine().SetUiState(false);
     }
 
     public void DisplayTransition()
