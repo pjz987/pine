@@ -13,6 +13,7 @@ public class CharacterStateMachine : FlickingMechanics
           Pinecone_Flicking,
           Pinecone_Movement,
           Pinecone_GrowTransition,
+          Tree_Sapling,
           Tree_StandingBy,
           Tree_Flicking
      }
@@ -122,7 +123,7 @@ public class CharacterStateMachine : FlickingMechanics
                }
           }
 
-          // Pinecone is locked in place, grows a tree and transitions to Tree_StandBy state.
+          // Pinecone is locked in place, grows a sapling and transitions to Tree_Sapling state.
           if (playerState == PlayerState.Pinecone_GrowTransition)
           {
                // If no tree is attached in controller, switch to pinecone flicking.
@@ -132,12 +133,23 @@ public class CharacterStateMachine : FlickingMechanics
                     return;
                }
 
-               GrowTreeSimple(treeObject);
-               playerState = PlayerState.Tree_StandingBy;
+               GrowSapling();
+               playerState = PlayerState.Tree_Sapling;
           }
           #endregion
 
           #region Tree States --------------------
+
+          // A sapling model replaced the pinecone and is waiting for waiting for screen transition.
+          if (playerState == PlayerState.Tree_Sapling)
+          {
+               if (exitSaplingState == true) // Must be called via screen-wipe.
+               {
+                    GrowTreeAfterSapling(treeObject);
+                    exitSaplingState = false;
+                    playerState = PlayerState.Tree_StandingBy;
+               }
+          }
 
           // Tree is planted and controller is waiting for player input.
           if (playerState == PlayerState.Tree_StandingBy)

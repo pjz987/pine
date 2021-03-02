@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(FoliageGrowth))]
 public class FlickingMechanics : MonoBehaviour
 {
+     // VFX
+     CharacterParticleEffects _vfx = null;
+
      // Camera
      GameObject playerCamera = null;
      private CameraController workingCameraController = null;
@@ -24,8 +26,13 @@ public class FlickingMechanics : MonoBehaviour
      // Flicking
      [Header("Flicking Objects")]
      public GameObject objectToFlick = null;
+     public GameObject saplingObject = null;
      public GameObject treeObject = null;
+
+     GameObject followingObject = null;
+     GameObject currentSapling = null;
      GameObject treeHolder = null;
+     GameObject foliageHolder = null;
      FoliageGrowth _foliageGrowth = null;
 
      [Header("Flick Attributes")]    
@@ -36,19 +43,20 @@ public class FlickingMechanics : MonoBehaviour
      [SerializeField] float treeBendAmount = 6f;
 
      [SerializeField] int flicksUntilTreeGrowth = 2;
-     public int currentFlickCounter = 0;
+     int currentFlickCounter = 0;
 
-     [SerializeField] float timeElapsedSinceFlick = 0.2f;
+     float timeElapsedSinceFlick = 2f;
      float flickTimerCountdown = 0f;
 
      // Raycasting and Tree Growing Thresolds
+     public bool exitSaplingState = false;
      float groundDistance = 0f;
      float pineconeVelocityAverage = 0f;
 
      [Header("Parameters for Tree Growth")]
-     public float groundDistanceThreshold = 0.15f;
-     public float pineconeVelocityThreshold = 0.15f;
-     public float tempTreeTop = 0f;
+     public float groundDistanceThreshold = 0.3f;
+     public float pineconeVelocityThreshold = 0.3f;
+     float tempTreeTop = 3.8f;
 
 
 
@@ -66,19 +74,33 @@ public class FlickingMechanics : MonoBehaviour
                     Debug.Log("No camera found. Please add the 'MainCamera' tag to the camera object.");
           }
 
+          // Sapling Object
+          CheckForSapling(true);
+
           // Tree Object
-          if (treeObject == null)
-               CheckForTree(true);
+          CheckForTree(true);
 
           // Tree Holder
           if (treeHolder == null)
                SearchForTreeHolder();
 
+          // Foliage Holder
+          if (foliageHolder == null)
+               SearchForFoliageHolder();
+
           // Foliage Growth
           _foliageGrowth = GetComponent<FoliageGrowth>();
+           CheckForFoliageGrowth(true);
+
+          // VFX
+          _vfx = GetComponent<CharacterParticleEffects>();
+          CheckForVFX(true);
 
           // Set the flick counter.
           currentFlickCounter = flicksUntilTreeGrowth;
+
+          // Initially follow the pinecone.
+          followingObject = objectToFlick;
      }
 
 
@@ -91,7 +113,7 @@ public class FlickingMechanics : MonoBehaviour
             if (objectToFlick == null)
                 return;
             
-            FollowTransform(objectToFlick.transform);
+            FollowTransform(followingObject.transform);
             playerCamera.GetComponent<CameraController>().FollowTransform(objectToFlick.transform);
 
             // PineconeFlick
@@ -113,7 +135,7 @@ public class FlickingMechanics : MonoBehaviour
      {
           if (objectToFlick != null)
           {
-               transform.position = objectToFollow.position;
+               transform.position = objectToFollow.localPosition;
           }
      }
 
@@ -138,6 +160,7 @@ public class FlickingMechanics : MonoBehaviour
      /// <summary>
      /// Prints out error message for not having an attached tree object for tree flicking.
      /// </summary>
+     /// <param name="sendMessage"></param>
      /// <returns></returns>
      protected bool CheckForTree(bool sendMessage = false)
      {
@@ -151,6 +174,64 @@ public class FlickingMechanics : MonoBehaviour
 
           return true;
      }
+
+
+
+     /// <summary>
+     /// Prints out error message for not having an attached sapling object for growth transitions.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     protected bool CheckForSapling(bool sendMessage = false)
+     {
+          if (saplingObject == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("No sapling object attached.");
+
+               return false;
+          }
+
+          return true;
+     }
+
+
+
+     /// <summary>
+     /// Checks for and can print out an error message for not having an attached foliage growth script.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     bool CheckForFoliageGrowth(bool sendMessage = false)
+     {
+          if (_foliageGrowth == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("No foliage growth script attached. Cannot spawn foliage around tree.");
+
+               return false;
+          }
+          return true;
+     }
+
+
+     /// <summary>
+     /// Checks for and can print out an error message for not having an attached character particle effects script.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     bool CheckForVFX(bool sendMessage = false)
+     {
+          if (_vfx == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("No CharacterParticleEffects script attached. Cannot use vfx.");
+
+               return false;
+          }
+          return true;
+     }
+
 
 
      /// <summary>
@@ -175,6 +256,32 @@ public class FlickingMechanics : MonoBehaviour
 
           // Assign the reference to the controller's Tree Holder.
           treeHolder = treeHolderRef;
+     }
+
+
+
+     /// <summary>
+     /// 
+     /// </summary>
+     void SearchForFoliageHolder()
+     {
+          GameObject foliageHolderRef;
+
+          // Search scene if a Foliage holder exists.
+          // If false, create one and assign the reference.
+          if (GameObject.FindGameObjectWithTag("FoliageHolder") == null)
+          {
+               GameObject newFoliageHolder = new GameObject();
+               newFoliageHolder.name = "FoliageHolder";
+               newFoliageHolder.tag = "FoliageHolder";
+               foliageHolderRef = newFoliageHolder;
+          }
+          // If true, assign the reference.
+          else
+               foliageHolderRef = GameObject.FindGameObjectWithTag("FoliageHolder");
+
+          // Assign the reference to the controller's Tree Holder.
+          foliageHolder = foliageHolderRef;
      }
 
 
@@ -471,6 +578,73 @@ public class FlickingMechanics : MonoBehaviour
      #region --- Tree Flicking ------------------
 
 
+     /// <summary>
+     /// 
+     /// </summary>
+     protected void GrowSapling()
+     {
+          // If there is no sapling object to use, abort.
+          if (CheckForSapling() == false)
+               return;
+
+          // Play the sapling growth vfx
+          if (CheckForVFX() == true)
+               _vfx.PlayVFX(_vfx.vfxPineconeSaplingGrowth);
+
+          // Find the pinecone's render child and hide it
+          GameObject pineconeRender = objectToFlick.transform.Find("render").gameObject;
+          pineconeRender.SetActive(false);
+
+          // Stop pinecone's movement
+          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
+          _rb.freezeRotation = true;
+
+          // Find the ground to spawn the sapling on
+          RaycastHit hit;
+          Physics.Raycast(this.transform.position, Vector3.down, out hit);
+          Vector3 groundPosition = hit.point;
+
+          // Create the sapling object
+          currentSapling = Instantiate(saplingObject, groundPosition, saplingObject.transform.rotation);
+     }
+
+
+     /// <summary>
+     /// 
+     /// </summary>
+     protected void GrowTreeAfterSapling(GameObject treeToGrow)
+     {
+          // Create the tree
+          GameObject newTree = Instantiate(treeToGrow, objectToFlick.transform.position, Quaternion.identity);
+          newTree.transform.parent = GameObject.FindGameObjectWithTag("TreeHolder").transform;
+          newTree.name = "tree_" + newTree.transform.parent.childCount;
+
+          // Set the new tree as the treeObject and have the camera follow it
+          treeObject = newTree;
+          followingObject = treeObject;
+
+          // Destroy the sapling
+          Destroy(currentSapling);
+
+          // Cancel most of objectToFlick's movement
+          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
+          _rb.freezeRotation = false;   // changing back from Sapling state
+          _rb.velocity = Vector3.zero;
+          _rb.angularVelocity = Vector3.zero;
+          _rb.useGravity = false;
+
+          // Find the pinecone's render child and show it again
+          GameObject pineconeRender = objectToFlick.transform.Find("render").gameObject;
+          pineconeRender.SetActive(true);
+
+          // Move the objectToFlick to the top of the tree
+          HoldObjectToFlickInTree();
+
+          // Generate the foliage around the tree.
+          if (CheckForFoliageGrowth() == true)
+               _foliageGrowth.GenerateFoliage(foliageHolder.transform);
+     }
+
 
      /// <summary>
      /// Instantiates a tree at the pinecone's ground position and moves the pinecone to the top of the tree.
@@ -478,8 +652,6 @@ public class FlickingMechanics : MonoBehaviour
      /// <param name="treeToGrow"></param>
      protected void GrowTreeSimple(GameObject treeToGrow)
      {
-          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
-
           // Create the tree
           GameObject newTree = Instantiate(treeToGrow, objectToFlick.transform.position, Quaternion.identity);
           newTree.transform.parent = GameObject.FindGameObjectWithTag("TreeHolder").transform;
@@ -489,12 +661,17 @@ public class FlickingMechanics : MonoBehaviour
           treeObject = newTree;
 
           // Cancel most of objectToFlick's movement
+          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
           _rb.velocity = Vector3.zero;
           _rb.angularVelocity = Vector3.zero;
           _rb.useGravity = false;
 
           // Move the objectToFlick to the top of the tree
           HoldObjectToFlickInTree();
+
+          // Generate the foliage around the tree.
+          if (CheckForFoliageGrowth() == true)
+               _foliageGrowth.GenerateFoliage(foliageHolder.transform);
      }
 
 
@@ -505,7 +682,7 @@ public class FlickingMechanics : MonoBehaviour
      protected void HoldObjectToFlickInTree()
      {
           // Get the holding position
-          Vector3 holdPosition = treeObject.transform.position + treeObject.transform.up * tempTreeTop;
+          Vector3 holdPosition = treeObject.transform.position + treeObject.transform.rotation * (Vector3.up * tempTreeTop);
 
           // Set the objectToFlick's position to the holding position.
           objectToFlick.transform.position = holdPosition;
@@ -555,6 +732,9 @@ public class FlickingMechanics : MonoBehaviour
      /// <param name="flickDirection"></param>
      protected void TreeFlick(Vector3 flickDirection)
      {
+          // Have camera follow pinecone again
+          followingObject = objectToFlick;
+
           // Center the tree's rotation
           treeObject.transform.rotation = Quaternion.Euler(0, 0, 0);
 
