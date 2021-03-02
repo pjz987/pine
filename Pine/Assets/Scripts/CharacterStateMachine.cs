@@ -5,9 +5,10 @@ using UnityEngine;
 public class CharacterStateMachine : FlickingMechanics
 {
 
-
+     // Character Controller player states.
      public enum PlayerState
      {
+          UI,
           Pinecone_StandingBy,
           Pinecone_Flicking,
           Pinecone_Movement,
@@ -15,16 +16,49 @@ public class CharacterStateMachine : FlickingMechanics
           Tree_StandingBy,
           Tree_Flicking
      }
-     public PlayerState playerState;
+     public PlayerState playerState = PlayerState.UI;
+
+     // Indicates whether or not the player is in the UI state.
+     bool uiPlayerState = true;
+
      AudioManager audioManager;
+
      // RNG for Random Sounds
      Random random = null; // new System.Random();
      string[] treeGroans = new string [] {"TreeGroan1", "TreeGroan2", "TreeGroan3", "TreeGroan4"};
+
+
+
+
      void Start ()
      {
           random = new Random();
           audioManager = FindObjectOfType<AudioManager>();
      }
+
+
+     /// <summary>
+     /// Meant to be called outside of the State Machine script.
+     /// Transitions player input between UI and Flicking Mechanics.
+     /// </summary>
+     /// <param name="setState"></param>
+     public void SetUiState(bool setState)
+     {
+          // Exiting the UI State
+          if (setState == false)
+          {
+               uiPlayerState = false;
+          }
+
+          // Entering the UI State
+          if (setState == true)
+          {
+               uiPlayerState = true;
+               playerState = PlayerState.UI;
+          }
+     }
+
+
 
      // The State Machine for the player.
      private void Update()
@@ -32,6 +66,18 @@ public class CharacterStateMachine : FlickingMechanics
           // Mouse Input is always running.
           MouseInput();
 
+
+          #region UI State
+
+          if (playerState == PlayerState.UI)
+          {
+               // Once declared false, then exit the UI state into the Pinecone StandingBy state.
+               if (uiPlayerState == false)
+                    playerState = PlayerState.Pinecone_StandingBy;
+          }
+
+
+          #endregion
 
           #region PineCone States --------------------
 
@@ -79,6 +125,13 @@ public class CharacterStateMachine : FlickingMechanics
           // Pinecone is locked in place, grows a tree and transitions to Tree_StandBy state.
           if (playerState == PlayerState.Pinecone_GrowTransition)
           {
+               // If no tree is attached in controller, switch to pinecone flicking.
+               if (CheckForTree() == false)
+               {
+                    playerState = PlayerState.Pinecone_StandingBy;
+                    return;
+               }
+
                GrowTreeSimple(treeObject);
                playerState = PlayerState.Tree_StandingBy;
           }

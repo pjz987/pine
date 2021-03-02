@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[RequireComponent(typeof(FoliageGrowth))]
 public class FlickingMechanics : MonoBehaviour
 {
-
      // Camera
      GameObject playerCamera = null;
      private CameraController workingCameraController = null;
@@ -12,7 +13,6 @@ public class FlickingMechanics : MonoBehaviour
      // Mouse
      Vector2 mouseClickPosition = new Vector2(1, 1);
      Vector2 mouseCurrentPosition = new Vector2(0, 0);
-
      Vector3 flickDirection = new Vector3(0, 0, 0);
      Vector3 flickDirectionPhysics = new Vector3(0, 0, 0);
 
@@ -25,6 +25,8 @@ public class FlickingMechanics : MonoBehaviour
      [Header("Flicking Objects")]
      public GameObject objectToFlick = null;
      public GameObject treeObject = null;
+     GameObject treeHolder = null;
+     FoliageGrowth _foliageGrowth = null;
 
      [Header("Flick Attributes")]    
      [SerializeField] float objectFlickForward = 6f;  
@@ -34,7 +36,7 @@ public class FlickingMechanics : MonoBehaviour
      [SerializeField] float treeBendAmount = 6f;
 
      [SerializeField] int flicksUntilTreeGrowth = 2;
-     int currentFlickCounter = 0;
+     public int currentFlickCounter = 0;
 
      [SerializeField] float timeElapsedSinceFlick = 0.2f;
      float flickTimerCountdown = 0f;
@@ -50,8 +52,11 @@ public class FlickingMechanics : MonoBehaviour
 
 
 
+     #region --- Awake, FixedUpdate and Misc. ---
+
      private void Awake()
      {
+          // Camera
           if (playerCamera == null)
           {
                playerCamera = GameObject.FindWithTag("MainCamera");
@@ -60,6 +65,17 @@ public class FlickingMechanics : MonoBehaviour
                if (playerCamera == null)
                     Debug.Log("No camera found. Please add the 'MainCamera' tag to the camera object.");
           }
+
+          // Tree Object
+          if (treeObject == null)
+               CheckForTree(true);
+
+          // Tree Holder
+          if (treeHolder == null)
+               SearchForTreeHolder();
+
+          // Foliage Growth
+          _foliageGrowth = GetComponent<FoliageGrowth>();
 
           // Set the flick counter.
           currentFlickCounter = flicksUntilTreeGrowth;
@@ -123,11 +139,13 @@ public class FlickingMechanics : MonoBehaviour
      /// Prints out error message for not having an attached tree object for tree flicking.
      /// </summary>
      /// <returns></returns>
-     bool CheckForTree()
+     protected bool CheckForTree(bool sendMessage = false)
      {
           if (treeObject == null)
           {
-               Debug.Log("No tree object attached. Cannot perform tree flicking action.");
+               if (sendMessage == true)
+                    Debug.Log("No tree object attached. Cannot perform tree flicking action.");
+
                return false;
           }
 
@@ -135,7 +153,35 @@ public class FlickingMechanics : MonoBehaviour
      }
 
 
-     #region Mouse Input --------------------
+     /// <summary>
+     /// 
+     /// </summary>
+     void SearchForTreeHolder()
+     {
+          GameObject treeHolderRef;
+
+          // Search in scene if a Tree Holder exists.
+          // If false, create one and assign the reference.
+          if (GameObject.FindGameObjectWithTag("TreeHolder") == null)
+          {
+               GameObject newTreeHolder = new GameObject();
+               newTreeHolder.name = "TreeHolder";
+               newTreeHolder.tag = "TreeHolder";
+               treeHolderRef = newTreeHolder;
+          }
+          // If true, assign the reference.
+          else
+               treeHolderRef = GameObject.FindGameObjectWithTag("TreeHolder");
+
+          // Assign the reference to the controller's Tree Holder.
+          treeHolder = treeHolderRef;
+     }
+
+
+     #endregion
+
+
+     #region --- Mouse Input --------------------
 
      /// <summary>
      /// Checks for all mouse input.
@@ -244,7 +290,8 @@ public class FlickingMechanics : MonoBehaviour
 
      #endregion
 
-     #region Pinecone Flicking --------------------
+
+     #region --- Pinecone Flicking --------------
 
 
      /// <summary>
@@ -421,7 +468,7 @@ public class FlickingMechanics : MonoBehaviour
      #endregion
 
 
-     #region Tree Flicking --------------------
+     #region --- Tree Flicking ------------------
 
 
 
@@ -529,7 +576,7 @@ public class FlickingMechanics : MonoBehaviour
      #endregion
 
 
-     #region Gizmos --------------------
+     #region --- Gizmos -------------------------
 
 
      // Temporary UI for flicking
