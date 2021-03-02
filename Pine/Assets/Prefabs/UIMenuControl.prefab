@@ -46,12 +46,19 @@ MonoBehaviour:
   mainMenu: {fileID: 0}
   credits: {fileID: 0}
   logo: {fileID: 0}
+  tutorialImage: {fileID: 0}
+  transition: {fileID: 0}
   logoStartPoint: {x: 0, y: -155}
   logoEndPoint: {x: 0, y: 280}
   mainMenuStartPoint: {x: 0, y: 0}
   mainMenuEndPoint: {x: 0, y: -500}
   creditsStartPoint: {x: -258, y: 316}
   creditsEndPoint: {x: 335, y: 316}
+  tutorialStartPoint: {x: -528, y: -1.6}
+  tutorialEndPoint: {x: 1060, y: -1.6}
+  transitionStarPoint: {x: 13, y: 2015}
+  transitionEndPoint: {x: 13, y: -1184}
   movementType: 25
   movementDelay: 1.3
+  timeBeforeTutorialDisplay: 10
   workingCameraController: {fileID: 0}
