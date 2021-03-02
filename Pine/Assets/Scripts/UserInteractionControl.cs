@@ -12,7 +12,7 @@ public class UserInteractionControl : MonoBehaviour
     private Vector2 logoStartPoint, logoEndPoint, mainMenuStartPoint, mainMenuEndPoint, creditsStartPoint, creditsEndPoint,
                     tutorialStartPoint, tutorialEndPoint, transitionStarPoint, transitionEndPoint;
     [SerializeField]
-    private Ease movementType;
+    private Ease movementType, oneDirectionMovementType;
     [SerializeField]
     private float movementDelay;
     [SerializeField]
@@ -72,7 +72,7 @@ public class UserInteractionControl : MonoBehaviour
 
     public void DisplayTransition()
     {
-        MoveOneDirection(transition, transitionStarPoint, movementType);
+        MoveOneDirection(transition, transitionStarPoint, oneDirectionMovementType);
     }
 
     private void MoveToView(RectTransform objectPositionToMove, Vector2 inViewCoordinates, Ease movementType)
