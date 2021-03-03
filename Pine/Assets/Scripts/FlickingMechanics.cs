@@ -30,7 +30,8 @@ public class FlickingMechanics : MonoBehaviour
      [Header("Flicking Objects")]
      public GameObject objectToFlick = null;
      public GameObject saplingObject = null;
-     public GameObject treeObject = null;
+     public GameObject[] treeSelection;
+     GameObject treeObject = null;
 
      GameObject followingObject = null;
      GameObject currentSapling = null;
@@ -51,10 +52,13 @@ public class FlickingMechanics : MonoBehaviour
      float timeElapsedSinceFlick = 2f;
      float flickTimerCountdown = 0f;
 
-     // Raycasting and Tree Growing Thresolds
-     [SerializeField] float transitionTimer = 3f;
-     float transitionTimerCurrent = 0f;
-     public bool exitSaplingState = false;
+     [Header("Transition Timers")]
+     [SerializeField] float delaySaplingLifeTimer = 1.3f;
+     float delaySaplingLifeCurrent = 0f;
+     [SerializeField] float delayTreeGrowthTimer = 0.6f;
+     float delayTreeGrowthCurrent = 0f;
+
+     // Raycasting and Tree Growing Thresholds
      float groundDistance = 0f;
      float pineconeVelocityAverage = 0f;
 
@@ -82,9 +86,6 @@ public class FlickingMechanics : MonoBehaviour
           // Sapling Object
           CheckForSapling(true);
 
-          // Tree Object
-          CheckForTree(true);
-
           // Tree Holder
           if (treeHolder == null)
                SearchForTreeHolder();
@@ -108,8 +109,9 @@ public class FlickingMechanics : MonoBehaviour
           // Set the flick counter.
           currentFlickCounter = flicksUntilTreeGrowth;
 
-          // Set the transition timer.
-          transitionTimerCurrent = transitionTimer;
+          // Set the transition timers.
+          delaySaplingLifeCurrent = delaySaplingLifeTimer;
+          delayTreeGrowthCurrent = delayTreeGrowthTimer;
 
           // Initially follow the pinecone.
           followingObject = objectToFlick;
@@ -608,7 +610,7 @@ public class FlickingMechanics : MonoBehaviour
 
 
      /// <summary>
-     /// 
+     /// Creates growth particles, hides the pinecone and creates a sapling object.
      /// </summary>
      protected void GrowSapling()
      {
@@ -635,41 +637,92 @@ public class FlickingMechanics : MonoBehaviour
 
           // Create the sapling object
           currentSapling = Instantiate(saplingObject, groundPosition, saplingObject.transform.rotation);
+     }
 
+
+     /// <summary>
+     /// Counts down the timer used for the sapling state's screen time.
+     /// </summary>
+     /// <returns></returns>
+     protected bool DelaySaplingLifeTimer()
+     {
+          // If the timer has not reached 0, then continue to count down.
+          if (delaySaplingLifeCurrent > 0)
+          {
+               delaySaplingLifeCurrent -= Time.deltaTime;
+               return false;
+          }
+
+          // Once the timer has reached 0, reset the timer for future use and return true.
+          return true;
+     }
+
+
+     /// <summary>
+     /// Counts down the timer used for the Tree Growth state.
+     /// </summary>
+     /// <returns></returns>
+     protected bool DelayTreeGrowthTimer()
+     {
+          // If the timer has not reached 0, then continue to count down.
+          if (delayTreeGrowthCurrent > 0)
+          {
+               delayTreeGrowthCurrent -= Time.deltaTime;
+               return false;
+          }
+
+          // Once the timer has reached 0, reset the timer for future use and return true.
+          return true;
+     }
+
+
+     /// <summary>
+     /// Resets both transition timers used for the sapling and tree growth states.
+     /// </summary>
+     protected void ResetTimers()
+     {
+          // Reset both transition timers.
+          delaySaplingLifeCurrent = delaySaplingLifeTimer;
+          delayTreeGrowthCurrent = delayTreeGrowthTimer;
+     }
+
+
+     /// <summary>
+     /// Calls the UI Menu Controls script 'DisplayTransition'.
+     /// </summary>
+     protected void BeginScreenTransition()
+     {
           // UI Screen Transition
           _ui.DisplayTransition();
      }
 
 
      /// <summary>
-     /// 
+     /// Selects a random tree to use for tree growth. 
      /// </summary>
      /// <returns></returns>
-     protected bool TransitionDelay()
+     protected bool SetRandomTree()
      {
-          // If the timer has not reached 0, then continue to count down.
-          if (transitionTimerCurrent > 0)
-          {
-               transitionTimerCurrent -= Time.deltaTime;
-               return false;
-          }
-          // Once the timer has reached 0, reset the timer for future use and return true.
-          else
-          {
-               transitionTimerCurrent = transitionTimer;
-               return true;
-          }
+          if (treeSelection.Length == 0)
+               return CheckForTree(true);
+
+          // Select a random tree
+          int randomTree = Random.Range(0, treeSelection.Length);
+          treeObject = treeSelection[randomTree];
+
+          // Return the check for the tree. Can be null if no possible trees.
+          return CheckForTree(true);
      }
 
 
 
      /// <summary>
-     /// 
+     /// Destroys the sapling, creates a tree, moves the pinecone to the top of the tree, reveals the pinecone and grows foliage.
      /// </summary>
-     protected void GrowTreeAfterSapling(GameObject treeToGrow)
+     protected void GrowTreeAfterSapling()
      {
           // Create the tree
-          GameObject newTree = Instantiate(treeToGrow, objectToFlick.transform.position, Quaternion.identity);
+          GameObject newTree = Instantiate(treeObject, objectToFlick.transform.position, treeObject.transform.rotation);
           newTree.transform.parent = GameObject.FindGameObjectWithTag("TreeHolder").transform;
           newTree.name = "tree_" + newTree.transform.parent.childCount;
 
