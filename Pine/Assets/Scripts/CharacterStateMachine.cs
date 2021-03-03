@@ -21,11 +21,15 @@ public class CharacterStateMachine : FlickingMechanics
      // Indicates whether or not the player is in the UI state.
      bool uiPlayerState = true;
 
+     // Pete audio start
+     
      AudioManager audioManager;
 
      // RNG for Random Sounds
-     Random random = null; // new System.Random();
+     Random random = null;
      string[] treeGroans = new string [] {"TreeGroan1", "TreeGroan2", "TreeGroan3", "TreeGroan4"};
+     Vector3 lastFlickDirection =  Vector3.zero;
+     // Pete audio end
 
 
 
@@ -101,6 +105,8 @@ public class CharacterStateMachine : FlickingMechanics
                {
                     PineconeFlick(flickDirection);
                     playerState = PlayerState.Pinecone_Movement;
+
+                    // Pete audio
                     audioManager.Play("GroundFlicking");
                }
           }
@@ -119,6 +125,9 @@ public class CharacterStateMachine : FlickingMechanics
                else if (PineconePlantingRequirements() == true)
                {
                     playerState = PlayerState.Pinecone_GrowTransition;
+                    
+                    // Pete audio
+                    audioManager.Play("TreeGrow");
                }
           }
 
@@ -148,7 +157,8 @@ public class CharacterStateMachine : FlickingMechanics
                if (mouseButtonDown == true)
                {
                     playerState = PlayerState.Tree_Flicking;
-                    audioManager.Play(treeGroans[Random.Range(0, treeGroans.Length)]);
+                    // Pete audio
+                    lastFlickDirection = Vector3.zero;
                }
           }
 
@@ -161,12 +171,26 @@ public class CharacterStateMachine : FlickingMechanics
                // Find the direction to flick while also rotation the tree.
                Vector3 flickDirection = PrepareTreeFlickSimple();
 
+               // Pete audio start
+               if (Mathf.Floor(flickDirection.magnitude) != Mathf.Floor(lastFlickDirection.magnitude))
+               {
+                    audioManager.PlayRandom(audioManager.treeGroansShort);
+
+               }
+               lastFlickDirection = flickDirection;
+               // Pete audio end
+
+
+
                // If the player lets go of the flick, apply force and watch pinecone movement.
                if (mouseButtonDown == false)
                {
                     TreeFlick(flickDirection);
                     playerState = PlayerState.Pinecone_Movement;
+                    // Pete audio
+                    audioManager.PlayWaitPlay("TreeWhoosh1", 0.3f, "Whee");
                }
+
           }
 
           #endregion
