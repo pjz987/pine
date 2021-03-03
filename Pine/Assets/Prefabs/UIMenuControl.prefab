@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 0}
+  levelFinishedMenu: {fileID: 0}
   credits: {fileID: 0}
   logo: {fileID: 0}
   tutorialImage: {fileID: 0}
@@ -52,13 +53,15 @@ MonoBehaviour:
   logoEndPoint: {x: 7, y: 281}
   mainMenuStartPoint: {x: 0, y: -20}
   mainMenuEndPoint: {x: 0, y: -500}
+  levelFinishedStartPoint: {x: 0, y: 0}
   creditsStartPoint: {x: -640, y: 0}
   creditsEndPoint: {x: 558, y: 0}
   tutorialStartPoint: {x: -238.6, y: -1.6}
   tutorialEndPoint: {x: 1060, y: -1.6}
   transitionStarPoint: {x: 13, y: -1027}
-  transitionEndPoint: {x: 13, y: 1247}
   movementType: 25
+  oneDirectionMovementType: 0
   movementDelay: 1.3
+  scaleDelay: 0
   timeBeforeTutorialDisplay: 5
   workingCameraController: {fileID: 0}
