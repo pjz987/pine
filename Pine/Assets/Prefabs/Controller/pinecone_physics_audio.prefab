@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 8762271916016853426}
   m_Layer: 0
   m_Name: pinecone_physics_audio
-  m_TagString: Untagged
+  m_TagString: Pinecone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 8656907283472460505}
   m_Layer: 0
   m_Name: BottomCollider
-  m_TagString: Untagged
+  m_TagString: Pinecone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 8656907283578645820}
   m_Layer: 0
   m_Name: TopCollider
-  m_TagString: Untagged
+  m_TagString: Pinecone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 8656907284011015872}
   m_Layer: 0
   m_Name: Colliders
-  m_TagString: Untagged
+  m_TagString: Pinecone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
