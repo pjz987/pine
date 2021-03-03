@@ -8,6 +8,9 @@ public class FlickingMechanics : MonoBehaviour
      // VFX
      CharacterParticleEffects _vfx = null;
 
+     // UI Menu Control
+     UserInteractionControl _ui = null;
+
      // Camera
      GameObject playerCamera = null;
      private CameraController workingCameraController = null;
@@ -49,6 +52,8 @@ public class FlickingMechanics : MonoBehaviour
      float flickTimerCountdown = 0f;
 
      // Raycasting and Tree Growing Thresolds
+     [SerializeField] float transitionTimer = 3f;
+     float transitionTimerCurrent = 0f;
      public bool exitSaplingState = false;
      float groundDistance = 0f;
      float pineconeVelocityAverage = 0f;
@@ -96,8 +101,15 @@ public class FlickingMechanics : MonoBehaviour
           _vfx = GetComponent<CharacterParticleEffects>();
           CheckForVFX(true);
 
+          // UI
+          _ui = GameObject.Find("UIMenuControl").GetComponent<UserInteractionControl>();
+          CheckForUI(true);
+
           // Set the flick counter.
           currentFlickCounter = flicksUntilTreeGrowth;
+
+          // Set the transition timer.
+          transitionTimerCurrent = transitionTimer;
 
           // Initially follow the pinecone.
           followingObject = objectToFlick;
@@ -232,6 +244,23 @@ public class FlickingMechanics : MonoBehaviour
           return true;
      }
 
+
+     /// <summary>
+     /// Checks for and can print out an error message for not finding the UI object in scene.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     bool CheckForUI(bool sendMessage = false)
+     {
+          if (_ui == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("Could not find the UIMenuControl object. Please rename the object with the 'UserInteractionControl' script to UIMenuControl.");
+
+               return false;
+          }
+          return true;
+     }
 
 
      /// <summary>
@@ -606,7 +635,32 @@ public class FlickingMechanics : MonoBehaviour
 
           // Create the sapling object
           currentSapling = Instantiate(saplingObject, groundPosition, saplingObject.transform.rotation);
+
+          // UI Screen Transition
+          _ui.DisplayTransition();
      }
+
+
+     /// <summary>
+     /// 
+     /// </summary>
+     /// <returns></returns>
+     protected bool TransitionDelay()
+     {
+          // If the timer has not reached 0, then continue to count down.
+          if (transitionTimerCurrent > 0)
+          {
+               transitionTimerCurrent -= Time.deltaTime;
+               return false;
+          }
+          // Once the timer has reached 0, reset the timer for future use and return true.
+          else
+          {
+               transitionTimerCurrent = transitionTimer;
+               return true;
+          }
+     }
+
 
 
      /// <summary>
