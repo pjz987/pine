@@ -603,6 +603,11 @@ PrefabInstance:
       propertyPath: objectToFlick
       value: 
       objectReference: {fileID: 1652057912}
+    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
+        type: 3}
+      propertyPath: transitionTimer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4589319132427398029, guid: 62df91aed944e224aa073d67a67b699c,
         type: 3}
       propertyPath: m_Name
@@ -995,6 +1000,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: UIMenuControl
+      objectReference: {fileID: 0}
+    - target: {fileID: 1193910893100899837, guid: 9f392e1835f784044b1660dbbdd32911,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f392e1835f784044b1660dbbdd32911, type: 3}
