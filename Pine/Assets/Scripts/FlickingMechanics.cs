@@ -2,53 +2,78 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class FlickingMechanics : MonoBehaviour
 {
+     // VFX
+     CharacterParticleEffects _vfx = null;
+
+     // UI Menu Control
+     UserInteractionControl _ui = null;
 
      // Camera
      GameObject playerCamera = null;
      private CameraController workingCameraController = null;
 
      // Mouse
-     Vector3 mouseDragDirection = new Vector3(0, 0, 0);
-     Vector2 mouseClickPosition = new Vector2(0, 0);
+     Vector2 mouseClickPosition = new Vector2(1, 1);
      Vector2 mouseCurrentPosition = new Vector2(0, 0);
+     Vector3 flickDirection = new Vector3(0, 0, 0);
+     Vector3 flickDirectionPhysics = new Vector3(0, 0, 0);
 
      protected bool mouseButtonDown = false;
+     bool allowPineconeFlick = false;
      bool showClickAbility = false;
-     [Header("Mouse Grab Spacing")]
-     public float uiClickArea = 1f;
-     public float uiMouseRadius = 1f;
+     float uiMouseRadius = 0.5f;
 
      // Flicking
      [Header("Flicking Objects")]
      public GameObject objectToFlick = null;
-     public GameObject treeObject = null;
+     public GameObject saplingObject = null;
+     public GameObject[] treeSelection;
+     GameObject treeObject = null;
 
-     [Header("Flick Attributes")]
-     public int flicksUntilTreeGrowth = 1;
-     public int currentFlickCounter = 0;
-     public float flickStrengthScalar = 15f;  
-     public float flickStrengthUpwards = 1f;
-     public float timeElapsedSinceFlick = 0.2f;
+     GameObject followingObject = null;
+     GameObject currentSapling = null;
+     GameObject treeHolder = null;
+     GameObject foliageHolder = null;
+     FoliageGrowth _foliageGrowth = null;
+
+     [Header("Flick Attributes")]    
+     [SerializeField] float objectFlickForward = 6f;  
+     [SerializeField] float objectFlickUpward = 0.8f;
+     [SerializeField] float treeFlickForward = 3.5f;
+     [SerializeField] float treeFlickUpward = 2.5f;
+     [SerializeField] float treeBendAmount = 6f;
+
+     [SerializeField] int flicksUntilTreeGrowth = 2;
+     int currentFlickCounter = 0;
+
+     float timeElapsedSinceFlick = 2f;
      float flickTimerCountdown = 0f;
 
-     Vector3 flickDirectionPhysics = new Vector3(0, 0, 0);
-     bool allowPineconeFlick = false;
+     [Header("Transition Timers")]
+     [SerializeField] float delaySaplingLifeTimer = 1.3f;
+     float delaySaplingLifeCurrent = 0f;
+     [SerializeField] float delayTreeGrowthTimer = 0.6f;
+     float delayTreeGrowthCurrent = 0f;
 
-     // Raycasting and Tree Growing Thresolds
+     // Raycasting and Tree Growing Thresholds
      float groundDistance = 0f;
      float pineconeVelocityAverage = 0f;
 
      [Header("Parameters for Tree Growth")]
-     public float groundDistanceThreshold = 0.15f;
-     public float pineconeVelocityThreshold = 0.15f;
-     public float tempTreeTop = 0f;
+     public float groundDistanceThreshold = 0.3f;
+     public float pineconeVelocityThreshold = 0.3f;
+     float tempTreeTop = 3.8f;
 
 
+
+     #region --- Awake, FixedUpdate and Misc. ---
 
      private void Awake()
      {
+          // Camera
           if (playerCamera == null)
           {
                playerCamera = GameObject.FindWithTag("MainCamera");
@@ -57,6 +82,39 @@ public class FlickingMechanics : MonoBehaviour
                if (playerCamera == null)
                     Debug.Log("No camera found. Please add the 'MainCamera' tag to the camera object.");
           }
+
+          // Sapling Object
+          CheckForSapling(true);
+
+          // Tree Holder
+          if (treeHolder == null)
+               SearchForTreeHolder();
+
+          // Foliage Holder
+          if (foliageHolder == null)
+               SearchForFoliageHolder();
+
+          // Foliage Growth
+          _foliageGrowth = GetComponent<FoliageGrowth>();
+           CheckForFoliageGrowth(true);
+
+          // VFX
+          _vfx = GetComponent<CharacterParticleEffects>();
+          CheckForVFX(true);
+
+          // UI
+          _ui = GameObject.Find("UIMenuControl").GetComponent<UserInteractionControl>();
+          CheckForUI(true);
+
+          // Set the flick counter.
+          currentFlickCounter = flicksUntilTreeGrowth;
+
+          // Set the transition timers.
+          delaySaplingLifeCurrent = delaySaplingLifeTimer;
+          delayTreeGrowthCurrent = delayTreeGrowthTimer;
+
+          // Initially follow the pinecone.
+          followingObject = objectToFlick;
      }
 
 
@@ -69,7 +127,7 @@ public class FlickingMechanics : MonoBehaviour
             if (objectToFlick == null)
                 return;
             
-            FollowTransform(objectToFlick.transform);
+            FollowTransform(followingObject.transform);
             playerCamera.GetComponent<CameraController>().FollowTransform(objectToFlick.transform);
 
             // PineconeFlick
@@ -91,7 +149,7 @@ public class FlickingMechanics : MonoBehaviour
      {
           if (objectToFlick != null)
           {
-               transform.position = objectToFollow.position;
+               transform.position = objectToFollow.localPosition;
           }
      }
 
@@ -116,12 +174,15 @@ public class FlickingMechanics : MonoBehaviour
      /// <summary>
      /// Prints out error message for not having an attached tree object for tree flicking.
      /// </summary>
+     /// <param name="sendMessage"></param>
      /// <returns></returns>
-     bool CheckForTree()
+     protected bool CheckForTree(bool sendMessage = false)
      {
           if (treeObject == null)
           {
-               Debug.Log("No tree object attached. Cannot perform tree flicking action.");
+               if (sendMessage == true)
+                    Debug.Log("No tree object attached. Cannot perform tree flicking action.");
+
                return false;
           }
 
@@ -129,7 +190,136 @@ public class FlickingMechanics : MonoBehaviour
      }
 
 
-     #region Mouse Input --------------------
+
+     /// <summary>
+     /// Prints out error message for not having an attached sapling object for growth transitions.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     protected bool CheckForSapling(bool sendMessage = false)
+     {
+          if (saplingObject == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("No sapling object attached.");
+
+               return false;
+          }
+
+          return true;
+     }
+
+
+
+     /// <summary>
+     /// Checks for and can print out an error message for not having an attached foliage growth script.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     bool CheckForFoliageGrowth(bool sendMessage = false)
+     {
+          if (_foliageGrowth == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("No foliage growth script attached. Cannot spawn foliage around tree.");
+
+               return false;
+          }
+          return true;
+     }
+
+
+     /// <summary>
+     /// Checks for and can print out an error message for not having an attached character particle effects script.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     bool CheckForVFX(bool sendMessage = false)
+     {
+          if (_vfx == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("No CharacterParticleEffects script attached. Cannot use vfx.");
+
+               return false;
+          }
+          return true;
+     }
+
+
+     /// <summary>
+     /// Checks for and can print out an error message for not finding the UI object in scene.
+     /// </summary>
+     /// <param name="sendMessage"></param>
+     /// <returns></returns>
+     bool CheckForUI(bool sendMessage = false)
+     {
+          if (_ui == null)
+          {
+               if (sendMessage == true)
+                    Debug.Log("Could not find the UIMenuControl object. Please rename the object with the 'UserInteractionControl' script to UIMenuControl.");
+
+               return false;
+          }
+          return true;
+     }
+
+
+     /// <summary>
+     /// 
+     /// </summary>
+     void SearchForTreeHolder()
+     {
+          GameObject treeHolderRef;
+
+          // Search in scene if a Tree Holder exists.
+          // If false, create one and assign the reference.
+          if (GameObject.FindGameObjectWithTag("TreeHolder") == null)
+          {
+               GameObject newTreeHolder = new GameObject();
+               newTreeHolder.name = "TreeHolder";
+               newTreeHolder.tag = "TreeHolder";
+               treeHolderRef = newTreeHolder;
+          }
+          // If true, assign the reference.
+          else
+               treeHolderRef = GameObject.FindGameObjectWithTag("TreeHolder");
+
+          // Assign the reference to the controller's Tree Holder.
+          treeHolder = treeHolderRef;
+     }
+
+
+
+     /// <summary>
+     /// 
+     /// </summary>
+     void SearchForFoliageHolder()
+     {
+          GameObject foliageHolderRef;
+
+          // Search scene if a Foliage holder exists.
+          // If false, create one and assign the reference.
+          if (GameObject.FindGameObjectWithTag("FoliageHolder") == null)
+          {
+               GameObject newFoliageHolder = new GameObject();
+               newFoliageHolder.name = "FoliageHolder";
+               newFoliageHolder.tag = "FoliageHolder";
+               foliageHolderRef = newFoliageHolder;
+          }
+          // If true, assign the reference.
+          else
+               foliageHolderRef = GameObject.FindGameObjectWithTag("FoliageHolder");
+
+          // Assign the reference to the controller's Tree Holder.
+          foliageHolder = foliageHolderRef;
+     }
+
+
+     #endregion
+
+
+     #region --- Mouse Input --------------------
 
      /// <summary>
      /// Checks for all mouse input.
@@ -146,7 +336,7 @@ public class FlickingMechanics : MonoBehaviour
           
 
           // Check to see if the mouse is within grabbing range of the object to flick
-          if (CheckMouseWithinFlickingArea(uiClickArea) == true && CheckForObjectToFlick() == true)
+          if (/*CheckMouseWithinFlickingArea() == true && */ CheckForObjectToFlick() == true)
           {
                // If the player clicks, then find the click position
                if (Input.GetButtonDown("MouseButton"))     
@@ -160,13 +350,15 @@ public class FlickingMechanics : MonoBehaviour
           if (Input.GetButtonUp("MouseButton"))
           {
                mouseButtonDown = false;
-               mouseClickPosition = Vector3.zero;
+               mouseClickPosition = Vector3.one;
           }
      }
 
 
+
      /// <summary>
-     /// Gets the position of the mouse to the playable screen size of the game, either windowed or fullscreen.
+     /// Gets the position of the mouse to the playable screen size of the game, either windowed or fullscreen. 
+     /// Does not set the center screen position regarding mouse input.
      /// </summary>
      /// <returns></returns>
      Vector2 GetMouseConstraints()
@@ -177,7 +369,7 @@ public class FlickingMechanics : MonoBehaviour
 
           // Set mouse origin position to the center of the playable area.
           mouseConstrainedPosition.x -= screenWidth;
-          mouseConstrainedPosition.y -= screenHeight;
+          mouseConstrainedPosition.y -= screenHeight; // * customScreenCenter;
 
           // Clamp the mouse position to the playable screen size.
           mouseConstrainedPosition.x = Mathf.Clamp(mouseConstrainedPosition.x, -screenWidth, screenWidth);
@@ -188,22 +380,23 @@ public class FlickingMechanics : MonoBehaviour
 
 
      /// <summary>
-     /// Gets the normalized vector3 of the mouse position relative to the center of the camera root position. 
+     /// Gets the angle between the mouse's current and clicked position and return a normalized vector from the camera's root position. 
      /// </summary>
      /// <returns></returns>
      Vector3 GetMouseDragAngle()
      {
-          // Get the camera root position.
-          Transform cameraRootTransform = playerCamera.transform.root.transform;
+          // Find the angle of the mouse current position relative to the mouse's clicked position.
+          float yDelta = mouseClickPosition.y - mouseCurrentPosition.y;
+          float xDelta = mouseClickPosition.x - mouseCurrentPosition.x;
+          float mouseAngle = -1f * Mathf.Atan2(yDelta, xDelta) * Mathf.Rad2Deg;
 
-          // Find the angle of the mouse position relative to the mouse's zero position (0, 0).
-          // Vector2.Angle wasn't working with (0, 0) as a point. Using Atan2 is fine.
-          float mouseAngle = Mathf.Atan2(mouseCurrentPosition.y, mouseCurrentPosition.x) * Mathf.Rad2Deg;
-          mouseAngle += 90f;  // Need to offset to align upcoming vector with mouse screen position
+          mouseAngle += 90f;       // Need to offset and invert X to align vector to camera's direction.
 
           // Creates a vector based on an angle around the camera root's y-axis, and at the camera root's position. 
-          // Inverted mouseAngle to align with mouse screen position.
-          Vector3 mouseDragDirection = Quaternion.AngleAxis(-mouseAngle, cameraRootTransform.up) * cameraRootTransform.position;
+          Transform cameraRootTransform = playerCamera.transform.root.transform;
+          Vector3 cameraPositionIgnoringHeight = new Vector3(cameraRootTransform.position.x, 0f, cameraRootTransform.position.z);
+
+          Vector3 mouseDragDirection = Quaternion.AngleAxis(mouseAngle, Vector3.up) * cameraPositionIgnoringHeight;
 
           // Returning normalized vector to keep consistency.
           return mouseDragDirection.normalized;
@@ -212,53 +405,31 @@ public class FlickingMechanics : MonoBehaviour
 
      
      /// <summary>
-     /// Gets the amount the mouse is pulled back relative to screen size and returns the scaled magnitude.
+     /// Gets the amount the mouse is pulled back relative to screen size AND screen center. Returns the scaled magnitude.
      /// </summary>
      /// <returns></returns>
-     float GetMouseDragDistance()
-     {
+     float GetMouseDragDistance(float forceAmount)
+     {    
           // Get percentage of mouse X to screen X. Repeat for Y.
-          float xPercent = mouseCurrentPosition.x / (Screen.width * 0.5f);
-          float yPercent = mouseCurrentPosition.y / (Screen.height * 0.5f);
+          float xCurrentPercent = mouseCurrentPosition.x / (Screen.width * 0.5f);
+          float yCurrentPercent = mouseCurrentPosition.y / (Screen.height * 0.5f); // * customScreenCenter);
 
-          // Set the percentage values in a new vector
-          Vector2 mouseDistance = new Vector2(xPercent, yPercent);
+          // Get percentage of click X to screen X. Repeat for Y.
+          float xClickPercent = mouseClickPosition.x / (Screen.width * 0.5f);
+          float yClickPercent = mouseClickPosition.y / (Screen.height * 0.5f); // * customScreenCenter);
+
+          // Set the distance between percentage values in a new vector
+          Vector2 mouseDistance = new Vector2(xCurrentPercent, yCurrentPercent) - new Vector2(xClickPercent, yClickPercent);                 
 
           // Return the magnitude of the new vector
-          return mouseDistance.magnitude * flickStrengthScalar;
-     }
-
-
-
-     /// <summary>
-     /// Determines whether or not the mouse is within the range of grabbing the tree/pinecone.
-     /// </summary>
-     /// <returns></returns>
-     bool CheckMouseWithinFlickingArea(float mouseGrabRange)
-     {
-          // If there is no object attached, only return false.
-          if (objectToFlick == null)
-          {
-               return false;
-          }
-          // Else if the mouse is within the flicking area, show flicking mouse grab range.
-          else if (Mathf.Abs(PreparePineconeFlick().magnitude) <= mouseGrabRange)
-          {
-               showClickAbility = true;
-               return true;
-          }
-          // If mouse is NOT within grabbing range, then return false.
-          else
-          {
-               showClickAbility = false;
-               return false;
-          }
+          return mouseDistance.magnitude * forceAmount;
      }
 
 
      #endregion
 
-     #region Pinecone Flicking --------------------
+
+     #region --- Pinecone Flicking --------------
 
 
      /// <summary>
@@ -267,16 +438,18 @@ public class FlickingMechanics : MonoBehaviour
      /// <returns></returns>
      protected Vector3 PreparePineconeFlick()
      {
-          Vector3 flickDirection = new Vector3(0, 0, 0);
+          // If the mouse button is currently held down, update flick direction
+          if (mouseButtonDown == true)
+          {
+               // Set the direction of the flick based on the angle on mouse click and orientation of camera.
+               flickDirection = GetMouseDragAngle();
 
-          // Set the direction of the flick based on the angle on mouse click and orientation of camera.
-          flickDirection = GetMouseDragAngle();
+               // Set the strength of the flick in the vector's magnitude.
+               flickDirection = flickDirection * GetMouseDragDistance(objectFlickForward);
 
-          // Set the strength of the flick in the vector's magnitude.
-          flickDirection = flickDirection * GetMouseDragDistance();
-
-          // Adjust the upward strength of the flick based on a percent of the flick's strength.
-          flickDirection = AdjustUpwardFlickStrength(flickDirection);
+               // Adjust the upward strength of the flick based on a percent of the flick's strength.
+               flickDirection = AdjustUpwardFlickStrength(flickDirection, objectFlickUpward);
+          }
 
           return flickDirection;
      }
@@ -286,10 +459,10 @@ public class FlickingMechanics : MonoBehaviour
      /// <summary>
      /// Applies an upward force to the pinecone based on flick strength.
      /// </summary>
-     Vector3 AdjustUpwardFlickStrength(Vector3 inputDirection)
+     Vector3 AdjustUpwardFlickStrength(Vector3 inputDirection, float forceAmount)
      {
           // Get the upward strength based on the magnitude
-          float upwardForce = inputDirection.magnitude * -flickStrengthUpwards;
+          float upwardForce = inputDirection.magnitude * -forceAmount;
 
           // Apply the upward force to the input vector.
           return inputDirection + new Vector3(0, upwardForce, 0);
@@ -340,8 +513,8 @@ public class FlickingMechanics : MonoBehaviour
           Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
 
           // Apply a force impulse to the object's rigidbody.
-          //_rb.AddForce(flickDirection, ForceMode.Impulse);
-          _rb.AddForceAtPosition(flickDirection, _rb.transform.position + (_rb.transform.up*0.1f), ForceMode.Impulse);
+          _rb.AddForce(flickDirection, ForceMode.Impulse);
+          //_rb.AddForceAtPosition(flickDirection, _rb.transform.position + (_rb.transform.up*0.1f), ForceMode.Impulse);
 
           // Zero out the flick position and remove ability to flick.
           flickDirectionPhysics = Vector3.zero;
@@ -433,8 +606,151 @@ public class FlickingMechanics : MonoBehaviour
      #endregion
 
 
-     #region Tree Flicking --------------------
+     #region --- Tree Flicking ------------------
 
+
+     /// <summary>
+     /// Creates growth particles, hides the pinecone and creates a sapling object.
+     /// </summary>
+     protected void GrowSapling()
+     {
+          // If there is no sapling object to use, abort.
+          if (CheckForSapling() == false)
+               return;
+
+          // Play the sapling growth vfx
+          if (CheckForVFX() == true)
+               _vfx.PlayVFX(_vfx.vfxPineconeSaplingGrowth);
+
+          // Find the pinecone's render child and hide it
+          GameObject pineconeRender = objectToFlick.transform.Find("render").gameObject;
+          pineconeRender.SetActive(false);
+
+          // Stop pinecone's movement
+          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
+          _rb.freezeRotation = true;
+
+          // Find the ground to spawn the sapling on
+          RaycastHit hit;
+          Physics.Raycast(this.transform.position, Vector3.down, out hit);
+          Vector3 groundPosition = hit.point;
+
+          // Create the sapling object
+          currentSapling = Instantiate(saplingObject, groundPosition, saplingObject.transform.rotation);
+     }
+
+
+     /// <summary>
+     /// Counts down the timer used for the sapling state's screen time.
+     /// </summary>
+     /// <returns></returns>
+     protected bool DelaySaplingLifeTimer()
+     {
+          // If the timer has not reached 0, then continue to count down.
+          if (delaySaplingLifeCurrent > 0)
+          {
+               delaySaplingLifeCurrent -= Time.deltaTime;
+               return false;
+          }
+
+          // Once the timer has reached 0, reset the timer for future use and return true.
+          return true;
+     }
+
+
+     /// <summary>
+     /// Counts down the timer used for the Tree Growth state.
+     /// </summary>
+     /// <returns></returns>
+     protected bool DelayTreeGrowthTimer()
+     {
+          // If the timer has not reached 0, then continue to count down.
+          if (delayTreeGrowthCurrent > 0)
+          {
+               delayTreeGrowthCurrent -= Time.deltaTime;
+               return false;
+          }
+
+          // Once the timer has reached 0, reset the timer for future use and return true.
+          return true;
+     }
+
+
+     /// <summary>
+     /// Resets both transition timers used for the sapling and tree growth states.
+     /// </summary>
+     protected void ResetTimers()
+     {
+          // Reset both transition timers.
+          delaySaplingLifeCurrent = delaySaplingLifeTimer;
+          delayTreeGrowthCurrent = delayTreeGrowthTimer;
+     }
+
+
+     /// <summary>
+     /// Calls the UI Menu Controls script 'DisplayTransition'.
+     /// </summary>
+     protected void BeginScreenTransition()
+     {
+          // UI Screen Transition
+          _ui.DisplayTransition();
+     }
+
+
+     /// <summary>
+     /// Selects a random tree to use for tree growth. 
+     /// </summary>
+     /// <returns></returns>
+     protected bool SetRandomTree()
+     {
+          if (treeSelection.Length == 0)
+               return CheckForTree(true);
+
+          // Select a random tree
+          int randomTree = Random.Range(0, treeSelection.Length);
+          treeObject = treeSelection[randomTree];
+
+          // Return the check for the tree. Can be null if no possible trees.
+          return CheckForTree(true);
+     }
+
+
+
+     /// <summary>
+     /// Destroys the sapling, creates a tree, moves the pinecone to the top of the tree, reveals the pinecone and grows foliage.
+     /// </summary>
+     protected void GrowTreeAfterSapling()
+     {
+          // Create the tree
+          GameObject newTree = Instantiate(treeObject, objectToFlick.transform.position, treeObject.transform.rotation);
+          newTree.transform.parent = GameObject.FindGameObjectWithTag("TreeHolder").transform;
+          newTree.name = "tree_" + newTree.transform.parent.childCount;
+
+          // Set the new tree as the treeObject and have the camera follow it
+          treeObject = newTree;
+          followingObject = treeObject;
+
+          // Destroy the sapling
+          Destroy(currentSapling);
+
+          // Cancel most of objectToFlick's movement
+          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
+          _rb.freezeRotation = false;   // changing back from Sapling state
+          _rb.velocity = Vector3.zero;
+          _rb.angularVelocity = Vector3.zero;
+          _rb.useGravity = false;
+
+          // Find the pinecone's render child and show it again
+          GameObject pineconeRender = objectToFlick.transform.Find("render").gameObject;
+          pineconeRender.SetActive(true);
+
+          // Move the objectToFlick to the top of the tree
+          HoldObjectToFlickInTree();
+
+          // Generate the foliage around the tree.
+          if (CheckForFoliageGrowth() == true)
+               _foliageGrowth.GenerateFoliage(foliageHolder.transform);
+     }
 
 
      /// <summary>
@@ -443,22 +759,26 @@ public class FlickingMechanics : MonoBehaviour
      /// <param name="treeToGrow"></param>
      protected void GrowTreeSimple(GameObject treeToGrow)
      {
-          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
-
           // Create the tree
           GameObject newTree = Instantiate(treeToGrow, objectToFlick.transform.position, Quaternion.identity);
           newTree.transform.parent = GameObject.FindGameObjectWithTag("TreeHolder").transform;
+          newTree.name = "tree_" + newTree.transform.parent.childCount;
 
           // Set the new tree as the treeObject
           treeObject = newTree;
 
           // Cancel most of objectToFlick's movement
+          Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
           _rb.velocity = Vector3.zero;
           _rb.angularVelocity = Vector3.zero;
           _rb.useGravity = false;
 
           // Move the objectToFlick to the top of the tree
           HoldObjectToFlickInTree();
+
+          // Generate the foliage around the tree.
+          if (CheckForFoliageGrowth() == true)
+               _foliageGrowth.GenerateFoliage(foliageHolder.transform);
      }
 
 
@@ -469,10 +789,13 @@ public class FlickingMechanics : MonoBehaviour
      protected void HoldObjectToFlickInTree()
      {
           // Get the holding position
-          Vector3 holdPosition = treeObject.transform.position + treeObject.transform.up * tempTreeTop;
+          Vector3 holdPosition = treeObject.transform.position + treeObject.transform.rotation * (Vector3.up * tempTreeTop);
 
           // Set the objectToFlick's position to the holding position.
           objectToFlick.transform.position = holdPosition;
+          
+          // Rotate the objectToFlick so it's up direction is the same as the tree's.
+          objectToFlick.transform.up = treeObject.transform.up;
      }
 
 
@@ -484,23 +807,26 @@ public class FlickingMechanics : MonoBehaviour
      /// <returns></returns>
      protected Vector3 PrepareTreeFlickSimple()
      {
-          Vector3 flickDirection = new Vector3(0, 0, 0);
+          // If the mouse button is currently held down, update flick direction.
+          if (mouseButtonDown == true)
+          {
+               // Set the direction of the flick based on the angle on mouse click and orientation of camera.
+               flickDirection = GetMouseDragAngle();
 
-          // Set the direction of the flick based on the angle on mouse click and orientation of camera.
-          flickDirection = GetMouseDragAngle();
+               // Set the strength of the flick in the vector's magnitude.
+               flickDirection = flickDirection * GetMouseDragDistance(treeFlickForward);
 
-          // Set the strength of the flick in the vector's magnitude.
-          flickDirection = flickDirection * GetMouseDragDistance();
+               // Rotating to flick direction - rotate tree along y-axis
+               Vector3 treeBend = (flickDirection * Mathf.Abs(treeBendAmount)) - new Vector3(0, -90f, 0);
+               treeObject.transform.localRotation = Quaternion.Euler(treeBend);
 
-          // Rotating to flick direction - rotate tree along y-axis
-          treeObject.transform.localRotation = Quaternion.Euler(flickDirection - new Vector3(0,-90f,0));
+               // Flicking back - rotate tree along x-axis
+               //Quaternion flickRotation = Quaternion.Euler(flickDirection.magnitude,0,0);
+               //treeObject.transform.localRotation = flickRotation;
 
-          // Flicking back - rotate tree along x-axis
-          //Quaternion flickRotation = Quaternion.Euler(flickDirection.magnitude,0,0);
-          //treeObject.transform.localRotation = flickRotation;
-
-          // Adjust the upward strength of the flick based on a percent of the flick's strength.
-          flickDirection = AdjustUpwardFlickStrength(flickDirection);
+               // Adjust the upward strength of the flick based on a percent of the flick's strength.
+               flickDirection = AdjustUpwardFlickStrength(flickDirection, treeFlickUpward);
+          }
 
           return flickDirection;
      }
@@ -513,6 +839,9 @@ public class FlickingMechanics : MonoBehaviour
      /// <param name="flickDirection"></param>
      protected void TreeFlick(Vector3 flickDirection)
      {
+          // Have camera follow pinecone again
+          followingObject = objectToFlick;
+
           // Center the tree's rotation
           treeObject.transform.rotation = Quaternion.Euler(0, 0, 0);
 
@@ -534,7 +863,7 @@ public class FlickingMechanics : MonoBehaviour
      #endregion
 
 
-     #region Gizmos --------------------
+     #region --- Gizmos -------------------------
 
 
      // Temporary UI for flicking
@@ -542,8 +871,8 @@ public class FlickingMechanics : MonoBehaviour
      {
           if (playerCamera != null)
           {
-               mouseDragDirection = GetMouseDragAngle();
-               float mouseStrength = GetMouseDragDistance();
+               Vector3 mouseDragDirection = GetMouseDragAngle();
+               float mouseStrength = GetMouseDragDistance(objectFlickForward);
 
                // Mouse Direction
                Vector3 from = playerCamera.transform.parent.position;
@@ -553,12 +882,13 @@ public class FlickingMechanics : MonoBehaviour
                Gizmos.DrawLine(from, to);
 
                // Mouse Action - Ability to Click
-               if (showClickAbility == true)
+               if (showClickAbility == true & mouseClickPosition != Vector2.one)
                {
                     Gizmos.color = Color.yellow;
-                    Gizmos.DrawSphere(objectToFlick.transform.position, uiClickArea*0.3f);
+                    Gizmos.DrawSphere(objectToFlick.transform.position, uiMouseRadius*0.3f);  
                }
 
+               
                // MouseAction - Click Being Held
                if (mouseButtonDown == true)
                {
@@ -566,8 +896,9 @@ public class FlickingMechanics : MonoBehaviour
                     Gizmos.DrawSphere(to, uiMouseRadius);
 
                     Gizmos.color = Color.blue;
-                    Gizmos.DrawLine(from, -PreparePineconeFlick() + from);
+                    Gizmos.DrawLine(from, -flickDirection + from);
                }
+               
           }
      }
 

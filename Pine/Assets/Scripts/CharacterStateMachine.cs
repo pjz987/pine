@@ -5,26 +5,65 @@ using UnityEngine;
 public class CharacterStateMachine : FlickingMechanics
 {
 
-
+     // Character Controller player states.
      public enum PlayerState
      {
+          UI,
           Pinecone_StandingBy,
           Pinecone_Flicking,
           Pinecone_Movement,
           Pinecone_GrowTransition,
+          Tree_Sapling,
           Tree_StandingBy,
           Tree_Flicking
      }
-     public PlayerState playerState;
+     public PlayerState playerState = PlayerState.UI;
+
+     // Indicates whether or not the player is in the UI state.
+     bool uiPlayerState = true;
+
+     // Pete audio start
+     
      AudioManager audioManager;
+
      // RNG for Random Sounds
-     Random random = null; // new System.Random();
+     Random random = null;
      string[] treeGroans = new string [] {"TreeGroan1", "TreeGroan2", "TreeGroan3", "TreeGroan4"};
+     Vector3 lastFlickDirection =  Vector3.zero;
+     // Pete audio end
+
+
+
+
      void Start ()
      {
           random = new Random();
           audioManager = FindObjectOfType<AudioManager>();
      }
+
+
+     /// <summary>
+     /// Meant to be called outside of the State Machine script.
+     /// Transitions player input between UI and Flicking Mechanics.
+     /// </summary>
+     /// <param name="setState"></param>
+     public void SetUiState(bool setState)
+     {
+          // Exiting the UI State
+          if (setState == false)
+          {
+               uiPlayerState = false;
+          }
+
+          // Entering the UI State
+          if (setState == true)
+          {
+               uiPlayerState = true;
+               playerState = PlayerState.UI;
+          }
+     }
+
+
 
      // The State Machine for the player.
      private void Update()
@@ -32,6 +71,18 @@ public class CharacterStateMachine : FlickingMechanics
           // Mouse Input is always running.
           MouseInput();
 
+
+          #region UI State
+
+          if (playerState == PlayerState.UI)
+          {
+               // Once declared false, then exit the UI state into the Pinecone StandingBy state.
+               if (uiPlayerState == false)
+                    playerState = PlayerState.Pinecone_StandingBy;
+          }
+
+
+          #endregion
 
           #region PineCone States --------------------
 
@@ -55,6 +106,8 @@ public class CharacterStateMachine : FlickingMechanics
                {
                     PineconeFlick(flickDirection);
                     playerState = PlayerState.Pinecone_Movement;
+
+                    // Pete audio
                     audioManager.Play("GroundFlicking");
                }
           }
@@ -73,18 +126,48 @@ public class CharacterStateMachine : FlickingMechanics
                else if (PineconePlantingRequirements() == true)
                {
                     playerState = PlayerState.Pinecone_GrowTransition;
+                    
+                    // Pete audio
+                    audioManager.Play("TreeGrow");
                }
           }
 
-          // Pinecone is locked in place, grows a tree and transitions to Tree_StandBy state.
+          // Pinecone is locked in place, grows a sapling and transitions to Tree_Sapling state.
           if (playerState == PlayerState.Pinecone_GrowTransition)
           {
-               GrowTreeSimple(treeObject);
-               playerState = PlayerState.Tree_StandingBy;
+               // If no tree is attached in controller, switch to pinecone flicking.
+               if (SetRandomTree() == false)
+               {
+                    playerState = PlayerState.Pinecone_StandingBy;
+                    return;
+               }
+
+               GrowSapling();
+               playerState = PlayerState.Tree_Sapling;
           }
           #endregion
 
           #region Tree States --------------------
+
+          // A sapling model replaced the pinecone and is waiting for waiting for screen transition.
+          if (playerState == PlayerState.Tree_Sapling)
+          {
+               // If the sapling timer has not elapsed yet, do nothing.
+               if (DelaySaplingLifeTimer() == false)
+                    return;
+
+               // After we've watched the sapling, begin the screen transition.
+               BeginScreenTransition();
+
+               // Once elapsed, wait unti the tree growth timer has elapsed to move to the next state.
+               if (DelayTreeGrowthTimer() == true)
+               {
+                    GrowTreeAfterSapling();
+                    ResetTimers();
+                    playerState = PlayerState.Tree_StandingBy;
+               }
+               
+          }
 
           // Tree is planted and controller is waiting for player input.
           if (playerState == PlayerState.Tree_StandingBy)
@@ -95,7 +178,8 @@ public class CharacterStateMachine : FlickingMechanics
                if (mouseButtonDown == true)
                {
                     playerState = PlayerState.Tree_Flicking;
-                    audioManager.Play(treeGroans[Random.Range(0, treeGroans.Length)]);
+                    // Pete audio
+                    lastFlickDirection = Vector3.zero;
                }
           }
 
@@ -108,12 +192,26 @@ public class CharacterStateMachine : FlickingMechanics
                // Find the direction to flick while also rotation the tree.
                Vector3 flickDirection = PrepareTreeFlickSimple();
 
+               // Pete audio start
+               if (Mathf.Floor(flickDirection.magnitude) != Mathf.Floor(lastFlickDirection.magnitude))
+               {
+                    audioManager.PlayRandom(audioManager.treeGroansShort);
+
+               }
+               lastFlickDirection = flickDirection;
+               // Pete audio end
+
+
+
                // If the player lets go of the flick, apply force and watch pinecone movement.
                if (mouseButtonDown == false)
                {
                     TreeFlick(flickDirection);
                     playerState = PlayerState.Pinecone_Movement;
+                    // Pete audio
+                    audioManager.PlayWaitPlay("TreeWhoosh1", 0.3f, "Whee");
                }
+
           }
 
           #endregion

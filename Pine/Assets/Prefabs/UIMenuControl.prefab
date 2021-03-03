@@ -44,14 +44,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 0}
+  levelFinishedMenu: {fileID: 0}
   credits: {fileID: 0}
   logo: {fileID: 0}
-  logoStartPoint: {x: 0, y: -155}
-  logoEndPoint: {x: 0, y: 280}
-  mainMenuStartPoint: {x: 0, y: 0}
+  tutorialImage: {fileID: 0}
+  transition: {fileID: 0}
+  logoStartPoint: {x: 7, y: -93.14}
+  logoEndPoint: {x: 7, y: 281}
+  mainMenuStartPoint: {x: 0, y: -20}
   mainMenuEndPoint: {x: 0, y: -500}
-  creditsStartPoint: {x: -258, y: 316}
-  creditsEndPoint: {x: 335, y: 316}
+  levelFinishedStartPoint: {x: 0, y: 0}
+  creditsStartPoint: {x: -640, y: 0}
+  creditsEndPoint: {x: 558, y: 0}
+  tutorialStartPoint: {x: -238.6, y: -1.6}
+  tutorialEndPoint: {x: 1060, y: -1.6}
+  transitionStarPoint: {x: 13, y: -1027}
   movementType: 25
+  oneDirectionMovementType: 0
   movementDelay: 1.3
+  scaleDelay: 0
+  timeBeforeTutorialDisplay: 5
   workingCameraController: {fileID: 0}

@@ -18,6 +18,19 @@ public class CameraController : MonoBehaviour
     GameObject characterController = null;
 
 
+
+     /// <summary>
+     /// Returns the state machine in the character controller. 
+     /// Purpose is to access function to enter and exit the UI player state.
+     /// </summary>
+     /// <returns></returns>
+     public CharacterStateMachine GetCharacterStateMachine()
+     {
+          return characterController.GetComponent<CharacterStateMachine>();
+     }
+
+
+
      virtual public void OnGamePlay()
      {
           // Find the character controller object.
