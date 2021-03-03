@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sounds:
   - name: GroundFlicking
-    clip: {fileID: 8300000, guid: eecc32dd891cd3a48b68b00371d187d6, type: 3}
+    clip: {fileID: 8300000, guid: a9a4b2cff24c6b949ba553f7f3e7a8c2, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -75,7 +75,7 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   - name: RustlingTrees
-    clip: {fileID: 8300000, guid: 58ebcabae8d9b044bae1bdaaced6d2b4, type: 3}
+    clip: {fileID: 8300000, guid: ca1f18b7b02985c4dbe761f397bd0d52, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -104,3 +104,126 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: TreeGroan4
+    clip: {fileID: 8300000, guid: bdd4c8d72c958404b9e9da4b0264c3ee, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort1
+    clip: {fileID: 8300000, guid: e7acb342fa1898246843d116290883fd, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort2
+    clip: {fileID: 8300000, guid: 7b106a894e468f049a9698ea08abc0f8, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort3
+    clip: {fileID: 8300000, guid: edb014286690b504a95e5e602e54881e, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort4
+    clip: {fileID: 8300000, guid: 6f3527adfc524fa4fbe25fd517263c5e, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort5
+    clip: {fileID: 8300000, guid: e3e86256ae9b5d04caa0cdee046aef44, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort6
+    clip: {fileID: 8300000, guid: b1a9b56675dd55e44b3cd2383f815a50, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort7
+    clip: {fileID: 8300000, guid: 7744c8b90eb47ac4c937ab957dae734d, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort8
+    clip: {fileID: 8300000, guid: 0ac4cdf70c26ab74b9606b944ca60b41, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort9
+    clip: {fileID: 8300000, guid: 2b21f7d03e602a549ba435131570990e, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort10
+    clip: {fileID: 8300000, guid: 41b94be31e05d9d4cb2f74957c65cc05, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGroanShort11
+    clip: {fileID: 8300000, guid: 0ff788b9c84e4ef458580ef654c4dd23, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeGrow
+    clip: {fileID: 8300000, guid: 9f161b12f890f00449828023d4a83535, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeWhoosh1
+    clip: {fileID: 8300000, guid: 71b9967d873917c4c9bf35a37707f9d6, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: TreeWhoosh2
+    clip: {fileID: 8300000, guid: 9561a8ff8c97eac4bb4f4a0c85a2999e, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  treeGroansShort:
+  - TreeGroanShort1
+  - TreeGroanShort2
+  - TreeGroanShort3
+  - TreeGroanShort4
+  - TreeGroanShort5
+  - TreeGroanShort6
+  - TreeGroanShort7
+  - TreeGroanShort8
+  - TreeGroanShort9
+  - TreeGroanShort10
+  - TreeGroanShort11
+  treeGroansLong:
+  - TreeGroan1
+  - TreeGroan2
+  - TreeGroan3
+  - TreeGroan4
+  treeGroansAll:
+  - TreeGroan1
+  - TreeGroan2
+  - TreeGroan3
+  - TreeGroan4
+  - TreeGroanShort1
+  - TreeGroanShort2
+  - TreeGroanShort3
+  - TreeGroanShort4
+  - TreeGroanShort5
+  - TreeGroanShort6
+  - TreeGroanShort7
+  - TreeGroanShort8
+  - TreeGroanShort9
+  - TreeGroanShort10
+  - TreeGroanShort11
