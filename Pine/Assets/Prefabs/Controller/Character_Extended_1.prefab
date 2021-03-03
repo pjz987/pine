@@ -48,15 +48,16 @@ MonoBehaviour:
   objectToFlick: {fileID: 0}
   saplingObject: {fileID: 4202266937367155104, guid: 5b61a35e785ce1c43bff0ecc0ac8b9bf,
     type: 3}
-  treeObject: {fileID: 3235536750669014927, guid: 8a3a313b9abba464dab8ad40d26201a2,
-    type: 3}
+  treeSelection:
+  - {fileID: 3235536750669014927, guid: 8a3a313b9abba464dab8ad40d26201a2, type: 3}
   objectFlickForward: 6
   objectFlickUpward: 0.8
   treeFlickForward: 3.5
   treeFlickUpward: 2.5
   treeBendAmount: 6
   flicksUntilTreeGrowth: 2
-  exitSaplingState: 0
+  delaySaplingLifeTimer: 1.3
+  delayTreeGrowthTimer: 0.6
   groundDistanceThreshold: 0.3
   pineconeVelocityThreshold: 0.3
   playerState: 0

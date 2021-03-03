@@ -136,7 +136,7 @@ public class CharacterStateMachine : FlickingMechanics
           if (playerState == PlayerState.Pinecone_GrowTransition)
           {
                // If no tree is attached in controller, switch to pinecone flicking.
-               if (CheckForTree() == false)
+               if (SetRandomTree() == false)
                {
                     playerState = PlayerState.Pinecone_StandingBy;
                     return;
@@ -152,12 +152,21 @@ public class CharacterStateMachine : FlickingMechanics
           // A sapling model replaced the pinecone and is waiting for waiting for screen transition.
           if (playerState == PlayerState.Tree_Sapling)
           {
-               if (exitSaplingState == true) // Must be called via screen-wipe.
+               // If the sapling timer has not elapsed yet, do nothing.
+               if (DelaySaplingLifeTimer() == false)
+                    return;
+
+               // After we've watched the sapling, begin the screen transition.
+               BeginScreenTransition();
+
+               // Once elapsed, wait unti the tree growth timer has elapsed to move to the next state.
+               if (DelayTreeGrowthTimer() == true)
                {
-                    GrowTreeAfterSapling(treeObject);
-                    exitSaplingState = false;
+                    GrowTreeAfterSapling();
+                    ResetTimers();
                     playerState = PlayerState.Tree_StandingBy;
                }
+               
           }
 
           // Tree is planted and controller is waiting for player input.
