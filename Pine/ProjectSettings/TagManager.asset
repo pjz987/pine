@@ -7,6 +7,7 @@ TagManager:
   - TreeHolder
   - raycast
   - FoliageHolder
+  - Pinecone
   layers:
   - Default
   - TransparentFX
