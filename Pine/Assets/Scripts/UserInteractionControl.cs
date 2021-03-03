@@ -7,14 +7,14 @@ using UnityEngine.UI;
 public class UserInteractionControl : MonoBehaviour
 {
     [SerializeField]
-    private RectTransform mainMenu, credits, logo, tutorialImage, transition;
+    private RectTransform mainMenu, levelFinishedMenu, credits, logo, tutorialImage, transition;
     [SerializeField]
-    private Vector2 logoStartPoint, logoEndPoint, mainMenuStartPoint, mainMenuEndPoint, creditsStartPoint, creditsEndPoint,
-                    tutorialStartPoint, tutorialEndPoint, transitionStarPoint, transitionEndPoint;
+    private Vector2 logoStartPoint, logoEndPoint, mainMenuStartPoint, mainMenuEndPoint, levelFinishedStartPoint,
+                    creditsStartPoint, creditsEndPoint, tutorialStartPoint, tutorialEndPoint, transitionStarPoint;
     [SerializeField]
     private Ease movementType, oneDirectionMovementType;
     [SerializeField]
-    private float movementDelay;
+    private float movementDelay, scaleDelay;
     [SerializeField]
     private float timeBeforeTutorialDisplay;
     [SerializeField]
@@ -65,7 +65,6 @@ public class UserInteractionControl : MonoBehaviour
     public void HideTutorial()
     {
         HideFromView(tutorialImage, tutorialEndPoint, movementType);
-
         // my line - transition playerstate from ui to pinecone_standingby
         workingCameraController.GetCharacterStateMachine().SetUiState(false);
     }
@@ -73,6 +72,11 @@ public class UserInteractionControl : MonoBehaviour
     public void DisplayTransition()
     {
         MoveOneDirection(transition, transitionStarPoint, oneDirectionMovementType);
+    }
+
+    public void DisplayFinishedMenu()
+    {
+        MoveToView(levelFinishedMenu, levelFinishedStartPoint, movementType);
     }
 
     private void MoveToView(RectTransform objectPositionToMove, Vector2 inViewCoordinates, Ease movementType)
@@ -85,14 +89,13 @@ public class UserInteractionControl : MonoBehaviour
         objectPositionToMove.DOAnchorPos(outOfViewCoordinates, movementDelay).SetEase(movementType);
     }
 
-    private void ScaleToSize(RectTransform objectPositionToScale, Vector3 scaleCoordinates)
+    public void ScaleToSize(RectTransform objectPositionToScale, Vector3 scaleToCoordinates)
     {
-        //work in progress
-        objectPositionToScale.DOPunchScale(scaleCoordinates, movementDelay);
+        objectPositionToScale.DOBlendableScaleBy(scaleToCoordinates, scaleDelay);
     }
+
     private void MoveOneDirection(RectTransform objectPositionToMove, Vector2 oppositeEndCoordinates, Ease movementType)
     {
-        //work in progress
         objectPositionToMove.DOAnchorPos(oppositeEndCoordinates, movementDelay).SetEase(movementType).OnComplete(() => objectPositionToMove.DORewind());
         objectPositionToMove.DORestart();
     }

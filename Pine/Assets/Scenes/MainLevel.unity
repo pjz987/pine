@@ -133,41 +133,21 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 326632911}
-    - target: {fileID: 344483460603484996, guid: 3f5269bfa030443a1811a24a7b92a110,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DisplayMainMenu
-      objectReference: {fileID: 0}
     - target: {fileID: 1852470287262542051, guid: 3f5269bfa030443a1811a24a7b92a110,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 326632911}
-    - target: {fileID: 1852470287262542051, guid: 3f5269bfa030443a1811a24a7b92a110,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: HideTutorial
-      objectReference: {fileID: 0}
-    - target: {fileID: 8609858612921013262, guid: 3f5269bfa030443a1811a24a7b92a110,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 326632911}
     - target: {fileID: 8609858612921013262, guid: 3f5269bfa030443a1811a24a7b92a110,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DisplayCredits
-      objectReference: {fileID: 0}
-    - target: {fileID: 8609858613582857813, guid: 3f5269bfa030443a1811a24a7b92a110,
-        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 326632911}
     - target: {fileID: 8609858613582857813, guid: 3f5269bfa030443a1811a24a7b92a110,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: MoveCameraToStart
-      objectReference: {fileID: 0}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 326632911}
     - target: {fileID: 8609858613820021273, guid: 3f5269bfa030443a1811a24a7b92a110,
         type: 3}
       propertyPath: m_Name
@@ -670,6 +650,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &1036615978 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7786297872104548823, guid: 3f5269bfa030443a1811a24a7b92a110,
+    type: 3}
+  m_PrefabInstance: {fileID: 57912693}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1220485264 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8609858613585605520, guid: 3f5269bfa030443a1811a24a7b92a110,
@@ -1060,6 +1046,11 @@ PrefabInstance:
       propertyPath: tutorialImage
       value: 
       objectReference: {fileID: 57912695}
+    - target: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
+        type: 3}
+      propertyPath: levelFinishedMenu
+      value: 
+      objectReference: {fileID: 1036615978}
     - target: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
         type: 3}
       propertyPath: workingCameraController
