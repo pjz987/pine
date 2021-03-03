@@ -194,6 +194,12 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: Whee
+    clip: {fileID: 8300000, guid: 63ca77196e5e89549a525a50635a9aec, type: 3}
+    volume: 0.331
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   treeGroansShort:
   - TreeGroanShort1
   - TreeGroanShort2
