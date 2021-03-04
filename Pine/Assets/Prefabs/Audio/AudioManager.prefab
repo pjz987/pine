@@ -200,6 +200,18 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: Ambience
+    clip: {fileID: 8300000, guid: bb33a5613a5b1e146bb202ea23e2d5c5, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: ScreenWipe
+    clip: {fileID: 8300000, guid: f2f87e1b9c74788458c52b8a92aeafbb, type: 3}
+    volume: 0.755
+    pitch: 0.48
+    loop: 0
+    source: {fileID: 0}
   treeGroansShort:
   - TreeGroanShort1
   - TreeGroanShort2
