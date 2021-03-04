@@ -80,56 +80,26 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: TreeGroan1
-    clip: {fileID: 8300000, guid: 1cb8a0ada35663045944d258d550e98e, type: 3}
-    volume: 0.231
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: TreeGroan2
-    clip: {fileID: 8300000, guid: 458b0f24670057b4c921e3879b9c91a9, type: 3}
-    volume: 0.298
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: TreeGroan3
-    clip: {fileID: 8300000, guid: 2ba489486975a004db95842aa9f015a5, type: 3}
-    volume: 0.273
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: TreeGroan4
-    clip: {fileID: 8300000, guid: bdd4c8d72c958404b9e9da4b0264c3ee, type: 3}
-    volume: 0.331
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: TreeGroan4
-    clip: {fileID: 8300000, guid: bdd4c8d72c958404b9e9da4b0264c3ee, type: 3}
-    volume: 0.331
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
   - name: TreeGroanShort1
-    clip: {fileID: 8300000, guid: e7acb342fa1898246843d116290883fd, type: 3}
+    clip: {fileID: 8300000, guid: 522cabb9f0eb76446abb65b850deb6c5, type: 3}
     volume: 0.331
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: TreeGroanShort2
-    clip: {fileID: 8300000, guid: 7b106a894e468f049a9698ea08abc0f8, type: 3}
+    clip: {fileID: 8300000, guid: d409b9f498d46a34e8dafc0ceed697e9, type: 3}
     volume: 0.331
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: TreeGroanShort3
-    clip: {fileID: 8300000, guid: edb014286690b504a95e5e602e54881e, type: 3}
+    clip: {fileID: 8300000, guid: 702c07444e327c940866a8d59bc3d814, type: 3}
     volume: 0.331
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: TreeGroanShort4
-    clip: {fileID: 8300000, guid: 6f3527adfc524fa4fbe25fd517263c5e, type: 3}
+    clip: {fileID: 8300000, guid: a7c8abda4bdf0c745b4b7ce65f946d57, type: 3}
     volume: 0.331
     pitch: 1
     loop: 0
