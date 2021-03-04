@@ -9,6 +9,7 @@ public class CharacterStateMachine : FlickingMechanics
      public enum PlayerState
      {
           UI,
+          EndGoal,
           Pinecone_StandingBy,
           Pinecone_Flicking,
           Pinecone_Movement,
@@ -72,13 +73,19 @@ public class CharacterStateMachine : FlickingMechanics
           MouseInput();
 
 
-          #region UI State
+          #region UI and EndGoal States
 
           if (playerState == PlayerState.UI)
           {
                // Once declared false, then exit the UI state into the Pinecone StandingBy state.
                if (uiPlayerState == false)
                     playerState = PlayerState.Pinecone_StandingBy;
+          }
+
+          if (playerState == PlayerState.EndGoal)
+          {
+               HoldObjectToFlickInTree(true);
+               DisplayEndScreen();
           }
 
 
@@ -164,9 +171,14 @@ public class CharacterStateMachine : FlickingMechanics
                {
                     GrowTreeAfterSapling();
                     ResetTimers();
-                    playerState = PlayerState.Tree_StandingBy;
+
+                    // If the player is growing a tree inside the end goal,
+                    if (insideEndGoal == true)
+                         playerState = PlayerState.EndGoal;           // Move to end state
+
+                    else // Gameplay is continuing.
+                         playerState = PlayerState.Tree_StandingBy;   // Continue flicking
                }
-               
           }
 
           // Tree is planted and controller is waiting for player input.

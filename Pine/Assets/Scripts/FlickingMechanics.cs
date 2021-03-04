@@ -30,8 +30,9 @@ public class FlickingMechanics : MonoBehaviour
      [Header("Flicking Objects")]
      public GameObject objectToFlick = null;
      public GameObject saplingObject = null;
+     public GameObject treeObjectFinal = null;
      public GameObject[] treeSelection;
-     GameObject treeObject = null;
+     protected GameObject treeObject = null;
 
      GameObject followingObject = null;
      GameObject currentSapling = null;
@@ -66,6 +67,8 @@ public class FlickingMechanics : MonoBehaviour
      public float groundDistanceThreshold = 0.3f;
      public float pineconeVelocityThreshold = 0.3f;
      float tempTreeTop = 3.8f;
+     public float bigTreeTop = 14f;
+     protected bool insideEndGoal = false;
 
 
 
@@ -315,6 +318,16 @@ public class FlickingMechanics : MonoBehaviour
           foliageHolder = foliageHolderRef;
      }
 
+
+     /// <summary>
+     /// Sets the boolean for the whether or not the pinecone is inside the end goal trigger. 
+     /// Called via GoalPointCheck collision.
+     /// </summary>
+     /// <param name="status"></param>
+     public void SetGoalStatus(bool status)
+     {
+          insideEndGoal = status;
+     }
 
      #endregion
 
@@ -632,7 +645,8 @@ public class FlickingMechanics : MonoBehaviour
 
           // Find the ground to spawn the sapling on
           RaycastHit hit;
-          Physics.Raycast(this.transform.position, Vector3.down, out hit);
+          Vector3 additionalHeight = new Vector3(0f, 0.2f, 0f);
+          Physics.Raycast(this.transform.position + additionalHeight, Vector3.down, out hit);
           Vector3 groundPosition = hit.point;
 
           // Create the sapling object
@@ -698,6 +712,14 @@ public class FlickingMechanics : MonoBehaviour
 
 
      /// <summary>
+     /// Calls the UI Menu Controls script 'Display Finished Menu'.
+     /// </summary>
+     protected void DisplayEndScreen()
+     {
+          _ui.DisplayFinishedMenu();
+     }
+
+     /// <summary>
      /// Selects a random tree to use for tree growth. 
      /// </summary>
      /// <returns></returns>
@@ -721,6 +743,10 @@ public class FlickingMechanics : MonoBehaviour
      /// </summary>
      protected void GrowTreeAfterSapling()
      {
+          // If inside the end goal, swap references.
+          if (insideEndGoal == true)
+               treeObject = treeObjectFinal;
+
           // Create the tree
           GameObject newTree = Instantiate(treeObject, objectToFlick.transform.position, treeObject.transform.rotation);
           newTree.transform.parent = GameObject.FindGameObjectWithTag("TreeHolder").transform;
@@ -786,10 +812,17 @@ public class FlickingMechanics : MonoBehaviour
      /// <summary>
      /// Keeps the objectToFlick at a postition in a tree.
      /// </summary>
-     protected void HoldObjectToFlickInTree()
+     protected void HoldObjectToFlickInTree(bool useBigTreeTop = false)
      {
+          // Determine the height to hold the pinecone at depending on if the pinecone is in the end goal or not via the tree grown.
+          float treeTop;
+          if (useBigTreeTop == true)
+               treeTop = bigTreeTop;
+          else
+               treeTop = tempTreeTop;
+
           // Get the holding position
-          Vector3 holdPosition = treeObject.transform.position + treeObject.transform.rotation * (Vector3.up * tempTreeTop);
+          Vector3 holdPosition = treeObject.transform.position + treeObject.transform.rotation * (Vector3.up * treeTop);
 
           // Set the objectToFlick's position to the holding position.
           objectToFlick.transform.position = holdPosition;
