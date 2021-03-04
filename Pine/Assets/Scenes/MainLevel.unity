@@ -365,6 +365,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 763756827}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &851942302 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8950139794372627625, guid: 3f5269bfa030443a1811a24a7b92a110,
+    type: 3}
+  m_PrefabInstance: {fileID: 57912693}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &859189964
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1133,6 +1139,11 @@ PrefabInstance:
       propertyPath: levelFinishedMenu
       value: 
       objectReference: {fileID: 1036615978}
+    - target: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
+        type: 3}
+      propertyPath: transitionEndPoint
+      value: 
+      objectReference: {fileID: 851942302}
     - target: {fileID: 1193910893100899836, guid: 9f392e1835f784044b1660dbbdd32911,
         type: 3}
       propertyPath: workingCameraController

@@ -58,10 +58,12 @@ MonoBehaviour:
   creditsEndPoint: {x: 558, y: 0}
   tutorialStartPoint: {x: -238.6, y: -1.6}
   tutorialEndPoint: {x: 1060, y: -1.6}
-  transitionStarPoint: {x: 13, y: 1270}
+  transitionStartPoint: {x: 0, y: 0}
+  transitionEndPoint: {fileID: 0}
   movementType: 25
   oneDirectionMovementType: 1
   movementDelay: 1.3
   scaleDelay: 0
   timeBeforeTutorialDisplay: 5
   workingCameraController: {fileID: 0}
+  workingCameraArialViewPosition: {x: -21.7, y: 46.2, z: -89.5}
