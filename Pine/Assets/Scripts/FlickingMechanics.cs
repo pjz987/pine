@@ -933,7 +933,7 @@ public class FlickingMechanics : MonoBehaviour
      /// <returns></returns>
      public Camera GetCamera()
      {
-          return playerCamera.GetComponent<Camera>();
+          return GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
      }
 
 
