@@ -62,6 +62,11 @@ public class AudioManager : MonoBehaviour
     };
     [Header("Screen Wipe SFX Delay")]
     public float waitForScreenAudio = 1.25f;
+    [Header("Crossfade on Victory Screen")]
+    [Range(0f, 20f)]
+    public float crossfadeTime = 10f;
+
+    private Coroutine coroutine;
 
     void Awake()
     {
@@ -76,7 +81,6 @@ public class AudioManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         foreach (Sound s in sounds)
         {
-            // Debug.Log("This happened");
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
             s.source.volume = s.volume;
@@ -129,8 +133,20 @@ public class AudioManager : MonoBehaviour
             Debug.Log("Could not find sound of name " + name);
             return;
         }
+        // if (coroutine != null) StopCoroutine(coroutine);
+        // coroutine = StartCoroutine("StartFade", (s.source, duration, targetVolume));
+        // StopAllCoroutines();
         StartCoroutine(StartFade(s.source, duration, targetVolume));
+        // StopStart(s.source, duration, targetVolume);
+       
     }
+
+    // private IEnumerator StopStart (AudioSource source, float duration, float targetVolume)
+    // {
+    //     StopAllCoroutines();
+    //     yield return null;
+    //     StartCoroutine(StartFade(source, duration, targetVolume));
+    // }
 
     public void PlayRandom (string[] names)
     {
@@ -169,7 +185,7 @@ public class AudioManager : MonoBehaviour
 
     public void AmbienceInMusicOut()
     {
-        CallFadeCoroutine("Music", 20f, 0f);
-        CallFadeCoroutine("Ambience", 20f, 1f);
+        CallFadeCoroutine("Music", crossfadeTime, 0f);
+        CallFadeCoroutine("Ambience", crossfadeTime, 1f);
     }
 }
