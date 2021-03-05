@@ -10,6 +10,7 @@ public class FlickingMechanics : MonoBehaviour
 
      // UI Menu Control
      UserInteractionControl _ui = null;
+     bool uiAllowFlick = false;
 
      // Camera
      GameObject playerCamera = null;
@@ -454,6 +455,9 @@ public class FlickingMechanics : MonoBehaviour
           // If the mouse button is currently held down, update flick direction
           if (mouseButtonDown == true)
           {
+               // Allow UI clicking
+               uiAllowFlick = true;
+
                // Set the direction of the flick based on the angle on mouse click and orientation of camera.
                flickDirection = GetMouseDragAngle();
 
@@ -463,6 +467,8 @@ public class FlickingMechanics : MonoBehaviour
                // Adjust the upward strength of the flick based on a percent of the flick's strength.
                flickDirection = AdjustUpwardFlickStrength(flickDirection, objectFlickUpward);
           }
+          else
+               uiAllowFlick = false;
 
           return flickDirection;
      }
@@ -526,8 +532,8 @@ public class FlickingMechanics : MonoBehaviour
           Rigidbody _rb = objectToFlick.GetComponent<Rigidbody>();
 
           // Apply a force impulse to the object's rigidbody.
-          _rb.AddForce(flickDirection, ForceMode.Impulse);
-          //_rb.AddForceAtPosition(flickDirection, _rb.transform.position + (_rb.transform.up*0.1f), ForceMode.Impulse);
+          //_rb.AddForce(flickDirection, ForceMode.Impulse);
+          _rb.AddForceAtPosition(flickDirection, _rb.transform.position + (_rb.transform.up*0.2f), ForceMode.Impulse);
 
           // Zero out the flick position and remove ability to flick.
           flickDirectionPhysics = Vector3.zero;
@@ -850,6 +856,9 @@ public class FlickingMechanics : MonoBehaviour
           // If the mouse button is currently held down, update flick direction.
           if (mouseButtonDown == true)
           {
+               // Allow UI clicking
+               uiAllowFlick = true;
+
                // Set the direction of the flick based on the angle on mouse click and orientation of camera.
                flickDirection = GetMouseDragAngle();
 
@@ -867,6 +876,8 @@ public class FlickingMechanics : MonoBehaviour
                // Adjust the upward strength of the flick based on a percent of the flick's strength.
                flickDirection = AdjustUpwardFlickStrength(flickDirection, treeFlickUpward);
           }
+          else
+               uiAllowFlick = false;
 
           return flickDirection;
      }
@@ -899,6 +910,62 @@ public class FlickingMechanics : MonoBehaviour
           currentFlickCounter = flicksUntilTreeGrowth;
      }
 
+
+     #endregion
+
+
+     #region --- Flicking UI --------------------
+
+
+     /// <summary>
+     /// Returns the screen position the mouse clicked on.
+     /// </summary>
+     /// <returns></returns>
+     public Vector2 GetMouseClickPosition()
+     {
+          return mouseClickPosition;
+     }
+
+
+     /// <summary>
+     /// Returns the camera that's following the objectToFlick.
+     /// </summary>
+     /// <returns></returns>
+     public Camera GetCamera()
+     {
+          return playerCamera.GetComponent<Camera>();
+     }
+
+
+     /// <summary>
+     /// Returns the flicking direction.
+     /// </summary>
+     /// <returns></returns>
+     public Vector3 GetCurrentFlickDirection()
+     {
+          return flickDirection;
+     }
+
+
+     /// <summary>
+     /// Returns the transform for the objectToFlick.
+     /// </summary>
+     /// <returns></returns>
+     public Transform GetFlickingObjectTransform()
+     {
+          //return playerCamera.transform.parent.position;
+          return objectToFlick.transform;
+     }
+
+
+     /// <summary>
+     /// Returns whether the mouse button is held down or not.
+     /// </summary>
+     /// <returns></returns>
+     public bool AllowClick()
+     {
+          return uiAllowFlick;
+     }
 
      #endregion
 
