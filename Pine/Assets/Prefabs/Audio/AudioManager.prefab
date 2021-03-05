@@ -46,7 +46,7 @@ MonoBehaviour:
   sounds:
   - name: GroundFlicking
     clip: {fileID: 8300000, guid: a9a4b2cff24c6b949ba553f7f3e7a8c2, type: 3}
-    volume: 1
+    volume: 0.492
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -58,19 +58,19 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Landing1
     clip: {fileID: 8300000, guid: 1d5b477fc11d04946bcea6611d8be827, type: 3}
-    volume: 1
+    volume: 0.796
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Landing2
     clip: {fileID: 8300000, guid: e1172ce45ea7b0545a781450049cf0f7, type: 3}
-    volume: 1
+    volume: 0.749
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Landing3
     clip: {fileID: 8300000, guid: acadbbae3ff8c0a4399d8ed1e19afa8c, type: 3}
-    volume: 1
+    volume: 0.762
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -148,7 +148,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: TreeGrow
     clip: {fileID: 8300000, guid: 9f161b12f890f00449828023d4a83535, type: 3}
-    volume: 0.331
+    volume: 0.474
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -166,7 +166,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Whee
     clip: {fileID: 8300000, guid: 63ca77196e5e89549a525a50635a9aec, type: 3}
-    volume: 0.331
+    volume: 0.235
     pitch: 1
     loop: 0
     source: {fileID: 0}
@@ -178,7 +178,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: ScreenWipe
     clip: {fileID: 8300000, guid: f2f87e1b9c74788458c52b8a92aeafbb, type: 3}
-    volume: 0.755
+    volume: 0.403
     pitch: 0.58
     loop: 0
     source: {fileID: 0}
@@ -219,3 +219,4 @@ MonoBehaviour:
   - TreeWhoosh1
   - TreeWhoosh2
   waitForScreenAudio: 1.25
+  crossfadeTime: 9
