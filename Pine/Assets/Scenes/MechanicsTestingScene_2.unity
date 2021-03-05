@@ -606,58 +606,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
         type: 3}
-      propertyPath: bigTreeTop
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
       propertyPath: objectToFlick
       value: 
       objectReference: {fileID: 1652057912}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: transitionTimer
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: treeObjectFinal
-      value: 
-      objectReference: {fileID: 9140989372552599451, guid: 742b8a4098f1e3249abe7c4341cf43d6,
-        type: 3}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: delayTreeGrowthTimer
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: delaySaplingLifeTimer
-      value: 1.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: treeSelection.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: treeSelection.Array.data[0]
-      value: 
-      objectReference: {fileID: 134421102639894252, guid: 7ab35fe641cdd7c4aba526de01cf53f8,
-        type: 3}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: treeSelection.Array.data[1]
-      value: 
-      objectReference: {fileID: 3818848010718508385, guid: 479ce967b6e3c244c892e4257687e0bf,
-        type: 3}
-    - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
-        type: 3}
-      propertyPath: treeSelection.Array.data[2]
-      value: 
-      objectReference: {fileID: 9140989372552599451, guid: 1d963738cdc652e478c4f1d565a246cc,
-        type: 3}
     - target: {fileID: 4589319132427398029, guid: 62df91aed944e224aa073d67a67b699c,
         type: 3}
       propertyPath: m_Name
