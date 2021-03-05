@@ -18,7 +18,7 @@ public class UserInteractionControl : MonoBehaviour
     [SerializeField]
     private float movementDelay, moveOneDirectionDelay, scaleDelay;
     [SerializeField]
-    private float timeBeforeTutorialDisplay;
+    private float timeBeforeTutorialDisplay, timeBeforeTransitionDisplay;
     [SerializeField]
     private CameraController workingCameraController;
     [SerializeField]
@@ -65,6 +65,17 @@ public class UserInteractionControl : MonoBehaviour
         yield return new WaitForSeconds(secondsToWaitFor);
         DisplayTutorial();
     }
+    
+    public void MoveTransition()
+    {
+        StartCoroutine(WaitAndShowTransition(timeBeforeTransitionDisplay));
+    }
+
+    IEnumerator WaitAndShowTransition(float secondsToWaitFor)
+    {
+        yield return new WaitForSeconds(secondsToWaitFor);
+        DisplayTransition();
+    }
 
     public void DisplayCredits()
     {
@@ -89,7 +100,7 @@ public class UserInteractionControl : MonoBehaviour
         workingCameraController.GetCharacterStateMachine().SetUiState(false);
     }
 
-    public void DisplayTransition()
+    private void DisplayTransition()
     {
         MoveOneDirection(transition, transitionStartPoint, oneDirectionMovementType);
     }
