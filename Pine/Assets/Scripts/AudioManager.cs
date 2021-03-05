@@ -54,6 +54,14 @@ public class AudioManager : MonoBehaviour
         "TreeGroanShort10",
         "TreeGroanShort11",
     };
+    [HideInInspector]
+    public string[] treeFlickWhooshes = new string[]
+    {
+            "TreeWhoosh1",
+            "TreeWhoosh2"
+    };
+    [Header("Screen Wipe SFX Delay")]
+    public float waitForScreenAudio = 1.25f;
 
     void Awake()
     {
@@ -141,7 +149,7 @@ public class AudioManager : MonoBehaviour
         Play(name2);
     }
 
-    public void PlayDelayed(string name, float delay)
+    public void PlayDelayed(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
         if (s == null)
@@ -149,7 +157,7 @@ public class AudioManager : MonoBehaviour
             Debug.Log("Could not find sound of name " + name);
             return;
         }
-        s.source.PlayDelayed(delay);
+        s.source.PlayDelayed(waitForScreenAudio);
     }
 
     public void MusicInAmbienceOut()
@@ -164,28 +172,4 @@ public class AudioManager : MonoBehaviour
         CallFadeCoroutine("Music", 20f, 0f);
         CallFadeCoroutine("Ambience", 20f, 1f);
     }
-    // private void Update()
-    // {
-    //     // test for fade-out
-    //     if (Input.GetKeyDown("space"))
-    //     {   
-    //         if (fadeBool)
-    //         {
-    //             CallFadeCoroutine("Ambience", 2f, 0f);
-    //             CallFadeCoroutine("Music", 0.01f, 1f);
-    //             Play("Music");
-    //         }
-    //         else
-    //         {
-    //             CallFadeCoroutine("Music", 20f, 0f);
-    //             CallFadeCoroutine("Ambience", 20f, 1f);
-    //         }
-    //         fadeBool = !fadeBool;
-    //     }
-    //     // test for screen-wipe
-    //     if (Input.GetKeyDown("w"))
-    //     {
-    //         Play("ScreenWipe");
-    //     }
-    // }
 }
