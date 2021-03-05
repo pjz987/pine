@@ -56,7 +56,8 @@ public class UserInteractionControl : MonoBehaviour
         if (!workingCameraController.IsInGame)
         {
             workingCameraController.transform.parent.position = new Vector3(0,0,0);
-            workingCameraController.transform.localPosition = workingCameraArialViewPosition;
+            //workingCameraController.transform.localPosition = workingCameraArialViewPosition;
+            workingCameraController.SetOffsetDetails(workingCameraArialViewPosition);
         }
     }
     

@@ -63,8 +63,8 @@ MonoBehaviour:
   flicksUntilTreeGrowth: 2
   delaySaplingLifeTimer: 1.3
   delayTreeGrowthTimer: 0.6
-  groundDistanceThreshold: 0.15
-  pineconeVelocityThreshold: 0.15
+  groundDistanceThreshold: 0.17
+  pineconeVelocityThreshold: 0.17
   bigTreeTop: 36.5
   playerState: 0
 --- !u!114 &5863264931340937524
@@ -105,6 +105,8 @@ MonoBehaviour:
   vfxTreeFlick: {fileID: 6178619531474914849, guid: 18417ec23ec5a804dba403d1571ea0aa,
     type: 3}
   vfxPineconeGroundImpact: {fileID: 7889293898915170928, guid: 26794c503d7e57e46b5d52c2896fbdb7,
+    type: 3}
+  vfxPineconeSmallGroundImpact: {fileID: 6991912432020264743, guid: b19b2ee4d5069b24784113afc0a279f7,
     type: 3}
   currentSystems: []
 --- !u!114 &1691228747

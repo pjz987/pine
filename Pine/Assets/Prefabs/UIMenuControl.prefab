@@ -68,4 +68,4 @@ MonoBehaviour:
   timeBeforeTutorialDisplay: 5
   timeBeforeTransitionDisplay: 1
   workingCameraController: {fileID: 0}
-  workingCameraArialViewPosition: {x: -21.7, y: 46.2, z: -89.5}
+  workingCameraArialViewPosition: {x: -20, y: 110, z: 50}

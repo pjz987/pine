@@ -5,9 +5,11 @@ using DG.Tweening;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] Vector3 mountainCenter = new Vector3(0, 0, 0);
-    [SerializeField, Range(1,20)] float distanceFromPlayer = 5f;
-    [SerializeField, Range(0, 20)] float cameraHeight = 3f;
+    [SerializeField, Range(-50, 50)] float cameraSideShift = 0f;
+    [SerializeField, Range(1,100)] float distanceFromPlayer = 5f;
+    [SerializeField, Range(0, 100)] float cameraHeight = 3f;
     [SerializeField, Range(0, 60)] float tiltAngle = 20f;
+    [SerializeField] float menuRotationSpeed = 2f;
     [SerializeField]
     private float movementDelay;
     [SerializeField]
@@ -16,8 +18,7 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private GameObject initialObjectToFocusOn;
     GameObject characterController = null;
-
-
+    public bool menuRotation = false;
 
      /// <summary>
      /// Returns the state machine in the character controller. 
@@ -46,13 +47,17 @@ public class CameraController : MonoBehaviour
      }
 
 
-
      private void Update()
      {
         if (IsInGame)
         {
             SetPositionOffset();
             SetRotation();
+        }
+        else if (menuRotation)
+        {
+            SetPositionOffset();
+            PerformMenuRotation();
         }
      }
 
@@ -70,12 +75,20 @@ public class CameraController : MonoBehaviour
      void SetPositionOffset()
      {
           // Move the camera away from the its parent along the Y and Z axis
-          Vector3 offset = new Vector3(0, cameraHeight, -distanceFromPlayer);
+          Vector3 offset = new Vector3(cameraSideShift, cameraHeight, -distanceFromPlayer);
           this.transform.localPosition = offset;
 
           // Rotate the camera along its X axis.
           Quaternion targetTilt = Quaternion.Euler(tiltAngle, 0, 0);
           this.transform.localRotation = targetTilt;
+     }
+
+
+     public void SetOffsetDetails(Vector3 offset)
+     {
+          cameraSideShift = offset.x;
+          distanceFromPlayer = offset.y;
+          cameraHeight = offset.z;
      }
 
 
@@ -100,6 +113,12 @@ public class CameraController : MonoBehaviour
           if (characterController == null)
                return;
 
+          float spin;
+          if (menuRotation)
+               spin = Time.deltaTime * (menuRotationSpeed * 0.1f);
+          else
+               spin = 0f;
+
           // Find the direction from the character controller to the mountain.
           Vector3 targetDirection = (characterController.transform.position - mountainCenter).normalized;
 
@@ -110,5 +129,12 @@ public class CameraController : MonoBehaviour
 
           // Apply the rotation to the camera's parent.
           transform.parent.LookAt(targetPosition);
+     }
+
+
+     void PerformMenuRotation()
+     {
+          float speed = Time.deltaTime * (menuRotationSpeed * 0.1f);
+          transform.root.transform.Rotate(0f, speed, 0f);
      }
 }

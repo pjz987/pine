@@ -128,9 +128,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mountainCenter: {x: 0, y: 0, z: 0}
+  cameraSideShift: 0
   distanceFromPlayer: 9
   cameraHeight: 5
   tiltAngle: 12
+  menuRotationSpeed: 20
   movementDelay: 0
   movementType: 0
   initialObjectToFocusOn: {fileID: 0}
+  menuRotation: 0
