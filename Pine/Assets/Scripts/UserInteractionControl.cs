@@ -18,16 +18,21 @@ public class UserInteractionControl : MonoBehaviour
     [SerializeField]
     private float movementDelay, moveOneDirectionDelay, scaleDelay;
     [SerializeField]
-    private float timeBeforeTutorialDisplay;
+    private float timeBeforeTutorialDisplay, timeBeforeTransitionDisplay;
     [SerializeField]
     private CameraController workingCameraController;
     [SerializeField]
     private Vector3 workingCameraArialViewPosition;
 
+    // Pete audio
+    AudioManager audioManager;
     public void Start()
     {
         MoveToView(logo, logoStartPoint, movementType);
         DisplayMainMenu();
+        
+        // Pete audio
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     public void DisplayScene(string sceneName)
@@ -41,6 +46,9 @@ public class UserInteractionControl : MonoBehaviour
         HideFromView(mainMenu, mainMenuEndPoint, movementType);
         workingCameraController.OnGamePlay();
         StartCoroutine(WaitAndShowTutorial(timeBeforeTutorialDisplay));
+        
+        // Pete audio
+        audioManager.MusicInAmbienceOut();
     }
     
     public void MoveCameraToArialView()
@@ -56,6 +64,17 @@ public class UserInteractionControl : MonoBehaviour
     {
         yield return new WaitForSeconds(secondsToWaitFor);
         DisplayTutorial();
+    }
+    
+    public void MoveTransition()
+    {
+        StartCoroutine(WaitAndShowTransition(timeBeforeTransitionDisplay));
+    }
+
+    IEnumerator WaitAndShowTransition(float secondsToWaitFor)
+    {
+        yield return new WaitForSeconds(secondsToWaitFor);
+        DisplayTransition();
     }
 
     public void DisplayCredits()
@@ -81,7 +100,7 @@ public class UserInteractionControl : MonoBehaviour
         workingCameraController.GetCharacterStateMachine().SetUiState(false);
     }
 
-    public void DisplayTransition()
+    private void DisplayTransition()
     {
         MoveOneDirection(transition, transitionStartPoint, oneDirectionMovementType);
     }

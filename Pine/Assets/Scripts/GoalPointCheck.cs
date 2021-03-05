@@ -6,7 +6,6 @@ public class GoalPointCheck : MonoBehaviour
 {
     CharacterStateMachine _stateMachine;
     [SerializeField] 
-    private CameraController workingCameraController;
 
     private void Awake()
     {
@@ -21,7 +20,6 @@ public class GoalPointCheck : MonoBehaviour
         if (other.tag == "Pinecone")
         {
             _stateMachine.SetGoalStatus(true);
-            workingCameraController.IsInGame = false;
         }
     }
 

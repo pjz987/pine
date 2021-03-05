@@ -63,8 +63,9 @@ MonoBehaviour:
   movementType: 25
   oneDirectionMovementType: 1
   movementDelay: 1.3
-  moveOneDirectionDelay: 0.1
+  moveOneDirectionDelay: 2
   scaleDelay: 0
   timeBeforeTutorialDisplay: 5
+  timeBeforeTransitionDisplay: 1
   workingCameraController: {fileID: 0}
   workingCameraArialViewPosition: {x: -21.7, y: 46.2, z: -89.5}
