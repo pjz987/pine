@@ -743,9 +743,16 @@ public class FlickingMechanics : MonoBehaviour
      /// </summary>
      protected void GrowTreeAfterSapling()
      {
-          // If inside the end goal, swap references.
-          if (insideEndGoal == true)
-               treeObject = treeObjectFinal;
+        // If inside the end goal, swap references.
+        if (insideEndGoal == true)
+        {
+            treeObject = treeObjectFinal;
+            _ui.MoveCameraToArialView();
+            DisplayEndScreen();
+        }
+
+        //Added the call to here so that it only gets called once each time GrowTreeAfterSapling gets called
+        BeginScreenTransition();
 
           // Create the tree
           GameObject newTree = Instantiate(treeObject, objectToFlick.transform.position, treeObject.transform.rotation);
