@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4589319132427398028}
   - component: {fileID: 5863264931340937524}
   - component: {fileID: 5863264931340937527}
+  - component: {fileID: 1691228747}
   m_Layer: 0
   m_Name: Character_Extended_1
   m_TagString: GameController
@@ -56,14 +57,14 @@ MonoBehaviour:
   - {fileID: 9140989372552599451, guid: 1d963738cdc652e478c4f1d565a246cc, type: 3}
   objectFlickForward: 6
   objectFlickUpward: 0.8
-  treeFlickForward: 4
-  treeFlickUpward: 2.5
+  treeFlickForward: 4.5
+  treeFlickUpward: 2
   treeBendAmount: 6
   flicksUntilTreeGrowth: 2
   delaySaplingLifeTimer: 1.3
   delayTreeGrowthTimer: 0.6
-  groundDistanceThreshold: 0.3
-  pineconeVelocityThreshold: 0.3
+  groundDistanceThreshold: 0.15
+  pineconeVelocityThreshold: 0.15
   bigTreeTop: 14
   playerState: 0
 --- !u!114 &5863264931340937524
@@ -104,3 +105,23 @@ MonoBehaviour:
   vfxTreeFlick: {fileID: 0}
   vfxPineconeGroundImpact: {fileID: 0}
   currentSystems: []
+--- !u!114 &1691228747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4589319132427398029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bd9167db576c934994e56336a804f27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openHandTexture: {fileID: 2800000, guid: 05b55d57799aeeb418bc9b4d45036141, type: 3}
+  closedHandTexture: {fileID: 2800000, guid: 2644e1a4729a59842a3fd6ebbe85c6ca, type: 3}
+  grabRingUIObject: {fileID: 0}
+  pullLineUIObject: {fileID: 2341085975902032952, guid: 32bf1974df514204ba574cf562798e36,
+    type: 3}
+  forwardLineUIObject: {fileID: 1748972537237082695, guid: 1919ecbae28816e419296c62463a6c2f,
+    type: 3}
+  ringDepth: 0
