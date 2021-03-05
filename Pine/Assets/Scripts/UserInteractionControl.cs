@@ -16,7 +16,7 @@ public class UserInteractionControl : MonoBehaviour
     [SerializeField]
     private Ease movementType, oneDirectionMovementType;
     [SerializeField]
-    private float movementDelay, scaleDelay;
+    private float movementDelay, moveOneDirectionDelay, scaleDelay;
     [SerializeField]
     private float timeBeforeTutorialDisplay;
     [SerializeField]
@@ -26,6 +26,7 @@ public class UserInteractionControl : MonoBehaviour
 
     public void Start()
     {
+
         MoveToView(logo, logoStartPoint, movementType);
         DisplayMainMenu();
     }
@@ -41,13 +42,15 @@ public class UserInteractionControl : MonoBehaviour
         HideFromView(mainMenu, mainMenuEndPoint, movementType);
         workingCameraController.OnGamePlay();
         StartCoroutine(WaitAndShowTutorial(timeBeforeTutorialDisplay));
+        //DisplayFinishedMenu();
     }
     
     public void MoveCameraToArialView()
     {
         if (!workingCameraController.IsInGame)
         {
-            workingCameraController.transform.position = workingCameraArialViewPosition;
+            workingCameraController.transform.parent.position = new Vector3(0,0,0);
+            workingCameraController.transform.localPosition = workingCameraArialViewPosition;
         }
     }
     
@@ -59,6 +62,7 @@ public class UserInteractionControl : MonoBehaviour
 
     public void DisplayCredits()
     {
+        //DisplayFinishedMenu();
         HideFromView(mainMenu, mainMenuEndPoint, movementType);
         MoveToView(credits, creditsStartPoint, movementType);
     }
@@ -108,6 +112,6 @@ public class UserInteractionControl : MonoBehaviour
 
     private void MoveOneDirection(RectTransform objectPositionToMove, Vector2 oppositeEndCoordinates, Ease movementType)
     {
-        objectPositionToMove.DOAnchorPos(oppositeEndCoordinates, movementDelay).SetEase(movementType).OnComplete(() => objectPositionToMove.position = transitionEndPoint.position);
+        objectPositionToMove.DOAnchorPos(oppositeEndCoordinates, moveOneDirectionDelay).SetEase(movementType).OnComplete(() => objectPositionToMove.position = transitionEndPoint.position);
     }
 }

@@ -58,3 +58,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77ca64908bf0ff84c86335e74a1a722a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  workingCameraController: {fileID: 0}

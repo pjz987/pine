@@ -85,7 +85,8 @@ public class CharacterStateMachine : FlickingMechanics
           if (playerState == PlayerState.EndGoal)
           {
                HoldObjectToFlickInTree(true);
-               DisplayEndScreen();
+                
+               //DisplayEndScreen();
           }
 
 
@@ -164,7 +165,7 @@ public class CharacterStateMachine : FlickingMechanics
                     return;
 
                // After we've watched the sapling, begin the screen transition.
-               BeginScreenTransition();
+               //BeginScreenTransition();
 
                // Once elapsed, wait unti the tree growth timer has elapsed to move to the next state.
                if (DelayTreeGrowthTimer() == true)
