@@ -8,6 +8,7 @@ public class CharacterParticleEffects : MonoBehaviour
      public GameObject vfxPineconeSaplingGrowth;
      public GameObject vfxTreeFlick;
      public GameObject vfxPineconeGroundImpact;
+     public GameObject vfxPineconeSmallGroundImpact;
 
      public List<GameObject> currentSystems = new List<GameObject>();
 
@@ -54,14 +55,14 @@ public class CharacterParticleEffects : MonoBehaviour
 
 
 
-     public void PlayVFX(GameObject vfx, float strength = 0f)
+     public void PlayVFX(GameObject vfx, Vector3 creationPosition, float strength = 0f)
      {
           // Check if any vfx is attached.
           if (CheckVFX(vfx) == false)
                return;
 
           // Create the new particle system and add it to the list of systems.
-          GameObject newSystem = Instantiate(vfx, transform.position, Quaternion.identity);
+          GameObject newSystem = Instantiate(vfx, creationPosition, Quaternion.identity);
           currentSystems.Add(newSystem);
 
           ParticleSystem vfxCurrent = newSystem.GetComponent<ParticleSystem>();

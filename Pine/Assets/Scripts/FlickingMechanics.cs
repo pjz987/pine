@@ -140,6 +140,8 @@ public class FlickingMechanics : MonoBehaviour
                 // Using the inverse of the flick direction to simulate pulling backwards.
                 PineconeFlickPhysics(-flickDirectionPhysics);
             }
+
+            PlayVFXDust();
         }  
      }
 
@@ -329,6 +331,24 @@ public class FlickingMechanics : MonoBehaviour
      {
           insideEndGoal = status;
      }
+
+
+     
+     /// <summary>
+     /// Watches the objectToFlick if it impacts a surface hard enough and plays the Dust vfx if it does.
+     /// </summary>
+     void PlayVFXDust()
+     {
+          PineconeVFX _coneVFX = objectToFlick.GetComponent<PineconeVFX>();
+
+          if (_coneVFX.playLargeVFX == true)
+               _vfx.PlayVFX(_vfx.vfxPineconeGroundImpact, objectToFlick.transform.position);
+
+          if (_coneVFX.playSmallVFX == true)
+               _vfx.PlayVFX(_vfx.vfxPineconeSmallGroundImpact, objectToFlick.transform.position);
+     }
+     
+
 
      #endregion
 
@@ -639,7 +659,7 @@ public class FlickingMechanics : MonoBehaviour
 
           // Play the sapling growth vfx
           if (CheckForVFX() == true)
-               _vfx.PlayVFX(_vfx.vfxPineconeSaplingGrowth);
+               _vfx.PlayVFX(_vfx.vfxPineconeSaplingGrowth, transform.position);
 
           // Find the pinecone's render child and hide it
           GameObject pineconeRender = objectToFlick.transform.Find("render").gameObject;
@@ -757,7 +777,8 @@ public class FlickingMechanics : MonoBehaviour
             workingCameraController.IsInGame = false;
             _ui.MoveCameraToArialView();
             DisplayEndScreen();
-        }
+            workingCameraController.menuRotation = true;
+          }
 
         //Added the call to here so that it only gets called once each time GrowTreeAfterSapling gets called
         BeginScreenTransition();
@@ -892,6 +913,10 @@ public class FlickingMechanics : MonoBehaviour
      /// <param name="flickDirection"></param>
      protected void TreeFlick(Vector3 flickDirection)
      {
+          // Play the sapling growth vfx
+          if (CheckForVFX() == true)
+               _vfx.PlayVFX(_vfx.vfxTreeFlick, objectToFlick.transform.position);
+
           // Have camera follow pinecone again
           followingObject = objectToFlick;
 
@@ -928,6 +953,15 @@ public class FlickingMechanics : MonoBehaviour
           return mouseClickPosition;
      }
 
+
+     /// <summary>
+     /// Returns the current flick counter.
+     /// </summary>
+     /// <returns></returns>
+     public int GetCurrentFlickCounter()
+     {
+          return currentFlickCounter;
+     }
 
      /// <summary>
      /// Returns the camera that's following the objectToFlick.
