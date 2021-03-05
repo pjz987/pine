@@ -604,11 +604,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1691228747, guid: 62df91aed944e224aa073d67a67b699c, type: 3}
-      propertyPath: grabRingUIObject
-      value: 
-      objectReference: {fileID: 452456789930066824, guid: 36bed8327cbd73d41b90678978b92e41,
-        type: 3}
     - target: {fileID: 4589319132427398028, guid: 62df91aed944e224aa073d67a67b699c,
         type: 3}
       propertyPath: objectToFlick

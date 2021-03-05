@@ -119,7 +119,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openHandTexture: {fileID: 2800000, guid: 05b55d57799aeeb418bc9b4d45036141, type: 3}
   closedHandTexture: {fileID: 2800000, guid: 2644e1a4729a59842a3fd6ebbe85c6ca, type: 3}
-  grabRingUIObject: {fileID: 0}
+  grabRingUIObject: {fileID: 452456789930066824, guid: 36bed8327cbd73d41b90678978b92e41,
+    type: 3}
   pullLineUIObject: {fileID: 2341085975902032952, guid: 32bf1974df514204ba574cf562798e36,
     type: 3}
   forwardLineUIObject: {fileID: 1748972537237082695, guid: 1919ecbae28816e419296c62463a6c2f,
