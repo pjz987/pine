@@ -153,7 +153,7 @@ public class CharacterStateMachine : FlickingMechanics
 
                GrowSapling();
                playerState = PlayerState.Tree_Sapling;
-               audioManager.PlayDelayed("ScreenWipe", 2f);
+               audioManager.PlayDelayed("ScreenWipe");
           }
           #endregion
 
@@ -225,7 +225,9 @@ public class CharacterStateMachine : FlickingMechanics
                     TreeFlick(flickDirection);
                     playerState = PlayerState.Pinecone_Movement;
                     // Pete audio
-                    audioManager.PlayWaitPlay("TreeWhoosh1", 0.3f, "Whee");
+                    if (Random.Range(0, 1f) >= 0.5f) audioManager.PlayWaitPlay("TreeWhoosh1", 0.3f, "Whee");
+                    else audioManager.PlayWaitPlay("TreeWhoosh2", 0.3f, "Whee");
+
                }
 
           }

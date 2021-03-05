@@ -155,13 +155,13 @@ MonoBehaviour:
   - name: TreeWhoosh1
     clip: {fileID: 8300000, guid: 71b9967d873917c4c9bf35a37707f9d6, type: 3}
     volume: 0.331
-    pitch: 1
+    pitch: 0.9
     loop: 0
     source: {fileID: 0}
   - name: TreeWhoosh2
     clip: {fileID: 8300000, guid: 9561a8ff8c97eac4bb4f4a0c85a2999e, type: 3}
     volume: 0.331
-    pitch: 1
+    pitch: 0.9
     loop: 0
     source: {fileID: 0}
   - name: Whee
@@ -179,7 +179,7 @@ MonoBehaviour:
   - name: ScreenWipe
     clip: {fileID: 8300000, guid: f2f87e1b9c74788458c52b8a92aeafbb, type: 3}
     volume: 0.755
-    pitch: 0.48
+    pitch: 0.58
     loop: 0
     source: {fileID: 0}
   treeGroansShort:
@@ -215,3 +215,7 @@ MonoBehaviour:
   - TreeGroanShort9
   - TreeGroanShort10
   - TreeGroanShort11
+  treeFlickWhooshes:
+  - TreeWhoosh1
+  - TreeWhoosh2
+  waitForScreenAudio: 1.25
