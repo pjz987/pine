@@ -100,10 +100,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e8359a5bcb269443bab83ef87fe4851, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vfxPineconeSaplingGrowth: {fileID: 5509037473632597772, guid: 064f3a1bd6cdd194090f9b1527a60bb1,
+  vfxPineconeSaplingGrowth: {fileID: 1284181168678828593, guid: 216762ac603b50547b4dfa77e0386a65,
     type: 3}
-  vfxTreeFlick: {fileID: 0}
-  vfxPineconeGroundImpact: {fileID: 0}
+  vfxTreeFlick: {fileID: 6178619531474914849, guid: 18417ec23ec5a804dba403d1571ea0aa,
+    type: 3}
+  vfxPineconeGroundImpact: {fileID: 7889293898915170928, guid: 26794c503d7e57e46b5d52c2896fbdb7,
+    type: 3}
   currentSystems: []
 --- !u!114 &1691228747
 MonoBehaviour:
