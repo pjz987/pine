@@ -302,6 +302,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: pinecone_01 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7068961283189577423, guid: a0942638a1c84d34e98877d7432bccec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7725289918457029940, guid: a0942638a1c84d34e98877d7432bccec,
         type: 3}
       propertyPath: m_RootOrder
@@ -585,6 +590,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: pinecone_01 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068961283189577423, guid: a0942638a1c84d34e98877d7432bccec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7725289918457029940, guid: a0942638a1c84d34e98877d7432bccec,
         type: 3}
