@@ -24,10 +24,15 @@ public class UserInteractionControl : MonoBehaviour
     [SerializeField]
     private Vector3 workingCameraArialViewPosition;
 
+    // Pete audio
+    AudioManager audioManager;
     public void Start()
     {
         MoveToView(logo, logoStartPoint, movementType);
         DisplayMainMenu();
+        
+        // Pete audio
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     public void DisplayScene(string sceneName)
@@ -41,6 +46,9 @@ public class UserInteractionControl : MonoBehaviour
         HideFromView(mainMenu, mainMenuEndPoint, movementType);
         workingCameraController.OnGamePlay();
         StartCoroutine(WaitAndShowTutorial(timeBeforeTutorialDisplay));
+        
+        // Pete audio
+        audioManager.MusicInAmbienceOut();
     }
     
     public void MoveCameraToArialView()
