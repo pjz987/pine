@@ -10,15 +10,19 @@ public class UserInteractionControl : MonoBehaviour
     private RectTransform mainMenu, levelFinishedMenu, credits, logo, tutorialImage, transition;
     [SerializeField]
     private Vector2 logoStartPoint, logoEndPoint, mainMenuStartPoint, mainMenuEndPoint, levelFinishedStartPoint,
-                    creditsStartPoint, creditsEndPoint, tutorialStartPoint, tutorialEndPoint, transitionStarPoint;
+                    creditsStartPoint, creditsEndPoint, tutorialStartPoint, tutorialEndPoint, transitionStartPoint;
+    [SerializeField]
+    private RectTransform transitionEndPoint;
     [SerializeField]
     private Ease movementType, oneDirectionMovementType;
     [SerializeField]
-    private float movementDelay, scaleDelay;
+    private float movementDelay, moveOneDirectionDelay, scaleDelay;
     [SerializeField]
     private float timeBeforeTutorialDisplay;
     [SerializeField]
     private CameraController workingCameraController;
+    [SerializeField]
+    private Vector3 workingCameraArialViewPosition;
 
     public void Start()
     {
@@ -38,7 +42,16 @@ public class UserInteractionControl : MonoBehaviour
         workingCameraController.OnGamePlay();
         StartCoroutine(WaitAndShowTutorial(timeBeforeTutorialDisplay));
     }
-
+    
+    public void MoveCameraToArialView()
+    {
+        if (!workingCameraController.IsInGame)
+        {
+            workingCameraController.transform.parent.position = new Vector3(0,0,0);
+            workingCameraController.transform.localPosition = workingCameraArialViewPosition;
+        }
+    }
+    
     IEnumerator WaitAndShowTutorial(float secondsToWaitFor)
     {
         yield return new WaitForSeconds(secondsToWaitFor);
@@ -65,13 +78,12 @@ public class UserInteractionControl : MonoBehaviour
     public void HideTutorial()
     {
         HideFromView(tutorialImage, tutorialEndPoint, movementType);
-        // my line - transition playerstate from ui to pinecone_standingby
         workingCameraController.GetCharacterStateMachine().SetUiState(false);
     }
 
     public void DisplayTransition()
     {
-        MoveOneDirection(transition, transitionStarPoint, oneDirectionMovementType);
+        MoveOneDirection(transition, transitionStartPoint, oneDirectionMovementType);
     }
 
     public void DisplayFinishedMenu()
@@ -96,7 +108,6 @@ public class UserInteractionControl : MonoBehaviour
 
     private void MoveOneDirection(RectTransform objectPositionToMove, Vector2 oppositeEndCoordinates, Ease movementType)
     {
-        objectPositionToMove.DOAnchorPos(oppositeEndCoordinates, movementDelay).SetEase(movementType).OnComplete(() => objectPositionToMove.DORewind());
-        objectPositionToMove.DORestart();
+        objectPositionToMove.DOAnchorPos(oppositeEndCoordinates, moveOneDirectionDelay).SetEase(movementType).OnComplete(() => objectPositionToMove.position = transitionEndPoint.position);
     }
 }
