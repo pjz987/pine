@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    bool fadeBool = true;  // true for start game false for end game
+    // bool fadeBool = true;  // true for start game false for end game
     public Sound[] sounds;
     public static AudioManager instance;
 
@@ -141,28 +141,51 @@ public class AudioManager : MonoBehaviour
         Play(name2);
     }
 
-    private void Update()
+    public void PlayDelayed(string name, float delay)
     {
-        // test for fade-out
-        if (Input.GetKeyDown("space"))
-        {   
-            if (fadeBool)
-            {
-                CallFadeCoroutine("Ambience", 2f, 0f);
-                CallFadeCoroutine("Music", 0.01f, 1f);
-                Play("Music");
-            }
-            else
-            {
-                CallFadeCoroutine("Music", 20f, 0f);
-                CallFadeCoroutine("Ambience", 20f, 1f);
-            }
-            fadeBool = !fadeBool;
-        }
-        // test for screen-wipe
-        if (Input.GetKeyDown("w"))
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
         {
-            Play("ScreenWipe");
+            Debug.Log("Could not find sound of name " + name);
+            return;
         }
+        s.source.PlayDelayed(delay);
     }
+
+    public void MusicInAmbienceOut()
+    {
+        CallFadeCoroutine("Ambience", 2f, 0f);
+        CallFadeCoroutine("Music", 0.01f, 1f);
+        Play("Music");
+    }
+
+    public void AmbienceInMusicOut()
+    {
+        CallFadeCoroutine("Music", 20f, 0f);
+        CallFadeCoroutine("Ambience", 20f, 1f);
+    }
+    // private void Update()
+    // {
+    //     // test for fade-out
+    //     if (Input.GetKeyDown("space"))
+    //     {   
+    //         if (fadeBool)
+    //         {
+    //             CallFadeCoroutine("Ambience", 2f, 0f);
+    //             CallFadeCoroutine("Music", 0.01f, 1f);
+    //             Play("Music");
+    //         }
+    //         else
+    //         {
+    //             CallFadeCoroutine("Music", 20f, 0f);
+    //             CallFadeCoroutine("Ambience", 20f, 1f);
+    //         }
+    //         fadeBool = !fadeBool;
+    //     }
+    //     // test for screen-wipe
+    //     if (Input.GetKeyDown("w"))
+    //     {
+    //         Play("ScreenWipe");
+    //     }
+    // }
 }

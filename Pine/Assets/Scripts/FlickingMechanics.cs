@@ -657,6 +657,7 @@ public class FlickingMechanics : MonoBehaviour
 
           // Create the sapling object
           currentSapling = Instantiate(saplingObject, groundPosition, saplingObject.transform.rotation);
+          BeginScreenTransition();
      }
 
 
@@ -713,7 +714,7 @@ public class FlickingMechanics : MonoBehaviour
      protected void BeginScreenTransition()
      {
           // UI Screen Transition
-          _ui.DisplayTransition();
+          _ui.MoveTransition();
      }
 
 
@@ -753,6 +754,7 @@ public class FlickingMechanics : MonoBehaviour
         if (insideEndGoal == true)
         {
             treeObject = treeObjectFinal;
+            workingCameraController.IsInGame = false;
             _ui.MoveCameraToArialView();
             DisplayEndScreen();
         }

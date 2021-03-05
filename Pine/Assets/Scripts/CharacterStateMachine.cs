@@ -54,6 +54,9 @@ public class CharacterStateMachine : FlickingMechanics
           if (setState == false)
           {
                uiPlayerState = false;
+
+               // // Pete audio
+               // audioManager.MusicInAmbienceOut();
           }
 
           // Entering the UI State
@@ -150,6 +153,7 @@ public class CharacterStateMachine : FlickingMechanics
 
                GrowSapling();
                playerState = PlayerState.Tree_Sapling;
+               audioManager.PlayDelayed("ScreenWipe", 2f);
           }
           #endregion
 
@@ -170,7 +174,11 @@ public class CharacterStateMachine : FlickingMechanics
 
                     // If the player is growing a tree inside the end goal,
                     if (insideEndGoal == true)
+                    {
                          playerState = PlayerState.EndGoal;           // Move to end state
+                         // Pete audio
+                         audioManager.AmbienceInMusicOut();
+                    }
 
                     else // Gameplay is continuing.
                          playerState = PlayerState.Tree_StandingBy;   // Continue flicking
